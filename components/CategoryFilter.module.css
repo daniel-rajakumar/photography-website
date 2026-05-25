@@ -1,0 +1,59 @@
+.filterNav {
+  padding-block: 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.filterNav::-webkit-scrollbar { display: none; }
+
+.track {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 100px;
+  font-size: 0.82rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  background: transparent;
+  transition: color var(--transition-fast), background var(--transition-fast),
+    border-color var(--transition-fast), transform var(--transition-fast);
+  white-space: nowrap;
+}
+
+.pill:hover:not(.pillActive) {
+  color: var(--color-text-secondary);
+  border-color: var(--color-border-strong);
+  background: rgba(255, 255, 255, 0.03);
+  transform: translateY(-1px);
+}
+
+.pillActive {
+  color: var(--color-gold);
+  border-color: rgba(201, 169, 110, 0.5);
+  background: var(--color-gold-dim);
+}
+
+.count {
+  font-size: 0.7rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: inherit;
+  opacity: 0.65;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.1rem 0.45rem;
+  border-radius: 100px;
+}
+
+.pillActive .count {
+  background: rgba(201, 169, 110, 0.15);
+}
