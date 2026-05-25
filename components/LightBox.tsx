@@ -2,20 +2,21 @@
 
 import { useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
-import type { Photo } from "@/lib/photos";
+import type { SanityPhoto } from "@/lib/sanity";
+import { urlFor } from "@/lib/sanity";
 import styles from "./LightBox.module.css";
 
 interface LightBoxProps {
-  photo: Photo | null;
-  photos: Photo[];
+  photo: SanityPhoto | null;
+  photos: SanityPhoto[];
   onClose: () => void;
-  onNavigate: (photo: Photo) => void;
+  onNavigate: (photo: SanityPhoto) => void;
 }
 
 export default function LightBox({ photo, photos, onClose, onNavigate }: LightBoxProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
-  const currentIndex = photo ? photos.findIndex((p) => p.id === photo.id) : -1;
+  const currentIndex = photo ? photos.findIndex((p) => p._id === photo._id) : -1;
   const canPrev = currentIndex > 0;
   const canNext = currentIndex < photos.length - 1;
 
@@ -50,6 +51,10 @@ export default function LightBox({ photo, photos, onClose, onNavigate }: LightBo
   const handleBackdropClick = (e: React.MouseEvent<HTMLDialogElement>) => {
     if (e.target === dialogRef.current) onClose();
   };
+
+  const imageUrl = photo
+    ? urlFor(photo.image).width(1600).auto("format").url()
+    : null;
 
   return (
     <dialog
@@ -87,13 +92,13 @@ export default function LightBox({ photo, photos, onClose, onNavigate }: LightBo
 
         {/* Image */}
         <div className={styles.imageWrapper}>
-          {photo && (
+          {photo && imageUrl && (
             <Image
-              key={photo.id}
-              src={photo.src}
+              key={photo._id}
+              src={imageUrl}
               alt={photo.alt}
-              width={photo.width}
-              height={photo.height}
+              width={photo.imageWidth || 1600}
+              height={photo.imageHeight || 1200}
               className={styles.image}
               priority
               sizes="(max-width: 768px) 100vw, 90vw"
