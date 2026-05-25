@@ -560,7 +560,7 @@
 
 .infoTitle {
   font-family: var(--font-sans);
-  font-size: 1.5rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: var(--color-text-primary);
   margin: 0;
@@ -587,7 +587,7 @@
 }
 
 .infoRow + .infoRow {
-  margin-top: 6px;
+  margin-top: 1px;
 }
 
 .infoCaptureDate {
@@ -627,7 +627,7 @@
 }
 
 .landscape .infoTitle {
-  font-size: 1.35rem;
+  font-size: 0.85rem;
   white-space: nowrap;
 }
 
