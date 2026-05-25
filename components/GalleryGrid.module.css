@@ -457,6 +457,8 @@
     height: auto;
     aspect-ratio: 16 / 9.25;
     max-width: 520px;
+    transform: rotate(90deg);
+    margin: 110px auto;
   }
   
   .landscape .phoneBezel {
