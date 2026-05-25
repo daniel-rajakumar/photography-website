@@ -1,7 +1,9 @@
 "use client";
 
-import { categories, type Category } from "@/lib/photos";
+import { type Category } from "@/lib/sanity";
 import styles from "./CategoryFilter.module.css";
+
+const categories: Category[] = ["all", "portrait", "landscape"];
 
 interface CategoryFilterProps {
   active: Category;
@@ -10,9 +12,9 @@ interface CategoryFilterProps {
 }
 
 const LABELS: Record<Category, string> = {
-  all: "All Work",
-  landscape: "Landscape",
-  portrait: "Portrait",
+  all: "All Screens",
+  portrait: "Portrait Phone",
+  landscape: "Landscape Phone",
   street: "Street",
   abstract: "Abstract",
   architecture: "Architecture",

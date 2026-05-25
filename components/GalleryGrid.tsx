@@ -2,62 +2,93 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import type { Photo } from "@/lib/photos";
+import type { SanityPhoto } from "@/lib/sanity";
+import { urlFor } from "@/lib/sanity";
 import LightBox from "./LightBox";
 import styles from "./GalleryGrid.module.css";
 
 interface GalleryGridProps {
-  photos: Photo[];
+  photos: SanityPhoto[];
 }
 
 export default function GalleryGrid({ photos }: GalleryGridProps) {
-  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
+  const [selectedPhoto, setSelectedPhoto] = useState<SanityPhoto | null>(null);
 
   return (
     <>
       <div className={styles.grid} role="list" aria-label="Photo gallery">
-        {photos.map((photo, index) => (
-          <article
-            key={photo.id}
-            className={styles.card}
-            role="listitem"
-            style={{ animationDelay: `${Math.min(index * 0.06, 0.5)}s` }}
-          >
-            <button
-              className={styles.cardBtn}
-              onClick={() => setSelectedPhoto(photo)}
-              aria-label={`View photo: ${photo.title}`}
-              id={`gallery-photo-${photo.id}`}
+        {photos.map((photo, index) => {
+          const imageUrl = urlFor(photo.image).width(800).auto("format").url();
+          const isHorizontal = photo.imageWidth && photo.imageHeight ? photo.imageWidth > photo.imageHeight : false;
+
+          return (
+            <article
+              key={photo._id}
+              className={styles.card}
+              role="listitem"
+              style={{ animationDelay: `${Math.min(index * 0.1, 0.8)}s` }}
             >
-              <div className={styles.imageWrapper}>
-                <Image
-                  src={photo.src}
-                  alt={photo.alt}
-                  width={photo.width}
-                  height={photo.height}
-                  className={styles.image}
-                  loading={index < 4 ? "eager" : "lazy"}
-                  priority={index === 0}
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                />
-                <div className={styles.overlay} aria-hidden="true">
-                  <div className={styles.overlayContent}>
-                    <span className={styles.eyebrow}>{photo.category}</span>
-                    <h3 className={styles.title}>{photo.title}</h3>
-                    {photo.location && (
-                      <span className={styles.location}>{photo.location}</span>
-                    )}
-                  </div>
-                  <div className={styles.expandIcon} aria-hidden="true">
-                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                      <path d="M10.5 3H15V7.5M7.5 15H3V10.5M15 3L9 9M3 15L9 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
+              {/* iPhone 15 Frame container */}
+              <div className={`${styles.phoneContainer} ${isHorizontal ? styles.landscape : ""}`}>
+                {/* Physical buttons on the sides */}
+                <div className={`${styles.physicalButton} ${styles.actionBtn}`} />
+                <div className={`${styles.physicalButton} ${styles.volumeUp}`} />
+                <div className={`${styles.physicalButton} ${styles.volumeDown}`} />
+                <div className={`${styles.physicalButton} ${styles.powerBtn}`} />
+
+                {/* Outer Titanium Bezel */}
+                <div className={styles.phoneBezel}>
+                  {/* Screen Content */}
+                  <button
+                    className={styles.phoneScreen}
+                    onClick={() => setSelectedPhoto(photo)}
+                    aria-label={`View photo: ${photo.title}`}
+                    id={`gallery-photo-${photo._id}`}
+                  >
+                    {/* Status Bar */}
+                    <div className={styles.statusBar}>
+                      <span className={styles.time}>9:41</span>
+                      <div className={styles.statusIcons}>
+                        {/* Signal Strength */}
+                        <svg width="17" height="11" viewBox="0 0 17 11" className={styles.signalIcon}>
+                          <path d="M1 9h1v2H1zm3-2h1v4H4zm3-2h1v6H7zm3-3h1v9h-1zm3-2h1v11h-1z" fill="currentColor" />
+                        </svg>
+                        {/* Wifi */}
+                        <svg width="15" height="11" viewBox="0 0 15 11" className={styles.wifiIcon}>
+                          <path d="M7.5 11a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm-3.54-3.54a5 5 0 0 1 7.08 0l-1.06 1.06a3.5 3.5 0 0 0-4.96 0L3.96 7.46zm-2.12-2.12a8 8 0 0 1 11.32 0l-1.06 1.06a6.5 6.5 0 0 0-9.2 0L1.84 5.34z" fill="currentColor" />
+                        </svg>
+                        {/* Battery */}
+                        <div className={styles.batteryIcon}>
+                          <div className={styles.batteryBody} />
+                          <div className={styles.batteryTip} />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Dynamic Island */}
+                    <div className={styles.dynamicIsland} />
+
+                    {/* Image Wallpaper */}
+                    <div className={styles.wallpaperWrapper}>
+                      <Image
+                        src={imageUrl}
+                        alt={photo.alt}
+                        fill
+                        className={styles.wallpaper}
+                        loading={index < 2 ? "eager" : "lazy"}
+                        priority={index === 0}
+                        sizes="(max-width: 768px) 100vw, 420px"
+                      />
+                    </div>
+
+                    {/* Home Indicator bar */}
+                    <div className={styles.homeIndicator} />
+                  </button>
                 </div>
               </div>
-            </button>
-          </article>
-        ))}
+            </article>
+          );
+        })}
       </div>
 
       <LightBox
