@@ -69,22 +69,22 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
 
                     {/* Image Info Panel (revealed on hover/swipe up) */}
                     <div className={styles.infoPanel} onClick={(e) => e.stopPropagation()}>
-                      <h4 className={styles.infoTitle}>{photo.title}</h4>
-                      <div className={styles.infoMetaLine}>
+                      <div className={styles.infoRow}>
+                        <h4 className={styles.infoTitle}>{photo.title}</h4>
+                        <p className={styles.infoCaptureDate}>APR 25, 2026</p>
+                      </div>
+                      <div className={styles.infoRow}>
                         <p className={styles.infoLocation}>
                           {photo.location ? (
                             <>
                               <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor" style={{display:"inline-block",marginRight:4,verticalAlign:"middle"}}>
                                 <path d="M6 1C4.07 1 2.5 2.57 2.5 4.5C2.5 7 6 11 6 11C6 11 9.5 7 9.5 4.5C9.5 2.57 7.93 1 6 1ZM6 6C5.17 6 4.5 5.33 4.5 4.5C4.5 3.67 5.17 3 6 3C6.83 3 7.5 3.67 7.5 4.5C7.5 5.33 6.83 6 6 6Z"/>
                               </svg>
-                              {photo.location}
+                              {photo.location.toUpperCase()}
                             </>
-                          ) : "Unknown Location"}
+                          ) : "UNKNOWN LOCATION"}
                         </p>
-                        <div className={styles.infoDeviceGroup}>
-                          <p className={styles.infoCaptureDate}>Apr 25, 2026</p>
-                          <p className={styles.infoDevice}>Shot on {photo.phone}</p>
-                        </div>
+                        <p className={styles.infoDevice}>SHOT ON {photo.phone.toUpperCase()}</p>
                       </div>
                     </div>
 
