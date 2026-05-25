@@ -12,7 +12,6 @@ interface Props {
 
 export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props) {
   const [sliderPos, setSliderPos] = useState<number>(100);
-  const [isHovering, setIsHovering] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [hasDragged, setHasDragged] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -73,15 +72,6 @@ export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props)
     }
   };
 
-  const handleMouseEnter = () => {
-    setIsHovering(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovering(false);
-    setSliderPos(100);
-  };
-
   const handleClick = (e: React.MouseEvent) => {
     if (hasDragged) {
       e.stopPropagation();
@@ -93,13 +83,7 @@ export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props)
     <div 
       className={styles.container} 
       ref={containerRef}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
       onClick={handleClick}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      style={{ touchAction: "none" }} // prevent page scroll when dragging on mobile
     >
       {/* Bottom layer: Unedited (Original) */}
       <Image src={originalSrc} alt={`Unedited ${alt}`} fill className={styles.image} sizes="(max-width: 768px) 100vw, 50vw" />
@@ -122,6 +106,10 @@ export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props)
           top: `max(12px, ${sliderPos}%)`,
           transition: isDragging ? "none" : "top 0.4s cubic-bezier(0.32, 0.72, 0, 1)"
         }}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
       >
         <div className={styles.sliderHandle} />
       </div>

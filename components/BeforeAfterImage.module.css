@@ -25,12 +25,18 @@
   position: absolute;
   left: 0;
   right: 0;
-  height: 0;
-  transform: translateY(-12px);
-  pointer-events: none;
+  height: 44px;
+  transform: translateY(calc(-50% - 10px));
   z-index: 10;
   display: flex;
   justify-content: center;
+  align-items: center;
+  cursor: grab;
+  touch-action: none;
+}
+
+.sliderLine:active {
+  cursor: grabbing;
 }
 
 .sliderHandle {
