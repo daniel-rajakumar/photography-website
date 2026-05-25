@@ -15,17 +15,31 @@ export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props)
   const [isHovering, setIsHovering] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [hasDragged, setHasDragged] = useState(false);
+  const [startX, setStartX] = useState(0);
   const [startY, setStartY] = useState(0);
   const [startPos, setStartPos] = useState(100);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const updatePos = (clientY: number) => {
+  const updatePos = (clientX: number, clientY: number) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
-    const deltaY = clientY - startY;
-    const deltaPercent = (deltaY / rect.height) * 100;
     
-    // Start from startPos, apply drag delta, clamp between 0 and 100
+    // Check if the phone container is physically rotated 90deg (mobile landscape)
+    const isRotated = window.innerWidth <= 768 && !!containerRef.current.closest('[class*="landscape"]');
+    
+    let deltaPercent = 0;
+    if (isRotated) {
+      // Container is rotated 90deg
+      // Bottom of phone is on the left, Top of phone is on the right
+      // Dragging Right (positive deltaX) moves towards Top (0%)
+      const deltaX = clientX - startX;
+      deltaPercent = -(deltaX / rect.width) * 100;
+    } else {
+      // Portrait mode or Desktop Landscape (unrotated)
+      const deltaY = clientY - startY;
+      deltaPercent = (deltaY / rect.height) * 100;
+    }
+    
     const newPercent = Math.max(0, Math.min(100, startPos + deltaPercent));
     setSliderPos(newPercent);
   };
@@ -33,6 +47,7 @@ export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props)
   const handlePointerDown = (e: React.PointerEvent) => {
     setIsDragging(true);
     setHasDragged(false);
+    setStartX(e.clientX);
     setStartY(e.clientY);
     setStartPos(sliderPos);
     e.currentTarget.setPointerCapture(e.pointerId);
@@ -40,10 +55,10 @@ export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props)
 
   const handlePointerMove = (e: React.PointerEvent) => {
     if (isDragging) {
-      if (Math.abs(e.clientY - startY) > 5) {
+      if (Math.abs(e.clientY - startY) > 5 || Math.abs(e.clientX - startX) > 5) {
         setHasDragged(true);
       }
-      updatePos(e.clientY);
+      updatePos(e.clientX, e.clientY);
     }
   };
 
