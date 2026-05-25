@@ -1,10 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import type { SanityPhoto } from "@/lib/sanity";
 import { urlFor } from "@/lib/sanity";
-import LightBox from "./LightBox";
 import styles from "./GalleryGrid.module.css";
 
 interface GalleryGridProps {
@@ -12,7 +10,6 @@ interface GalleryGridProps {
 }
 
 export default function GalleryGrid({ photos }: GalleryGridProps) {
-  const [selectedPhoto, setSelectedPhoto] = useState<SanityPhoto | null>(null);
 
   return (
     <>
@@ -39,10 +36,8 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
                 {/* Outer Titanium Bezel */}
                 <div className={styles.phoneBezel}>
                   {/* Screen Content */}
-                  <button
+                  <div
                     className={styles.phoneScreen}
-                    onClick={() => setSelectedPhoto(photo)}
-                    aria-label={`View photo: ${photo.title}`}
                     id={`gallery-photo-${photo._id}`}
                   >
                     {/* Status Bar */}
@@ -101,20 +96,13 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
 
                     {/* Home Indicator bar */}
                     <div className={styles.homeIndicator} />
-                  </button>
+                  </div>
                 </div>
               </div>
             </article>
           );
         })}
       </div>
-
-      <LightBox
-        photo={selectedPhoto}
-        photos={photos}
-        onClose={() => setSelectedPhoto(null)}
-        onNavigate={setSelectedPhoto}
-      />
     </>
   );
 }

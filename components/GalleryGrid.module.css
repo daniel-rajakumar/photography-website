@@ -98,7 +98,7 @@
   overflow: hidden;
   border: none;
   padding: 0;
-  cursor: pointer;
+  cursor: default;
   background: #000;
   text-align: left;
   outline: none;
