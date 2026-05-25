@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "sync": "npx sanity exec scripts/sync-photos.js --with-user-token"
   },
   "dependencies": {
     "@sanity/client": "^7.22.0",
