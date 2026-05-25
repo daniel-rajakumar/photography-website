@@ -6,7 +6,13 @@ import GalleryGrid from "@/components/GalleryGrid";
 import CategoryFilter from "@/components/CategoryFilter";
 import styles from "@/app/page.module.css";
 
-export default function GalleryClient({ photos }: { photos: LocalPhoto[] }) {
+export default function GalleryClient({ 
+  photos, 
+  content 
+}: { 
+  photos: LocalPhoto[];
+  content: { galleryTitle: string; galleryDescription: string };
+}) {
   const [activePhone, setActivePhone] = useState<string>("all");
 
   const phoneCategories = useMemo(() => {
@@ -35,12 +41,9 @@ export default function GalleryClient({ photos }: { photos: LocalPhoto[] }) {
       {/* Page Header */}
       <header className={styles.pageHeader}>
         <div className="container">
-          <p className="eyebrow">Portfolio</p>
-          <div className="divider" />
-          <h1 className={styles.pageTitle}>The Gallery</h1>
+          <h1 className={styles.pageTitle}>{content.galleryTitle}</h1>
           <p className={styles.pageDesc}>
-            A complete collection spanning landscapes, portraits, street scenes,
-            abstract macro work, and architectural studies.
+            {content.galleryDescription}
           </p>
         </div>
       </header>
