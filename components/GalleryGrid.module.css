@@ -205,7 +205,7 @@
 }
 
 .phoneScreen.showInfo .wallpaperWrapper {
-  transform: translateY(-75px);
+  transform: translateY(-53px);
 }
 
 .phoneScreen.showInfo .wallpaper {
@@ -537,15 +537,15 @@
    ======================================== */
 .infoPanel {
   position: absolute;
-  bottom: -90px; /* Hidden below the screen */
+  bottom: -64px; /* Hidden below the screen */
   left: 0;
   right: 0;
-  height: 90px;
+  height: 64px;
   background: rgba(15, 15, 15, 0.85);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 16px 22px 8px;
+  padding: 12px 22px 8px;
   z-index: 5;
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
@@ -555,7 +555,7 @@
 }
 
 .phoneScreen.showInfo .infoPanel {
-  transform: translateY(-90px); /* Slides up to bottom: 0px */
+  transform: translateY(-64px); /* Slides up to bottom: 0px */
 }
 
 .infoTitle {
@@ -613,17 +613,17 @@
 
 /* Landscape Overrides for Info Panel */
 .landscape .infoPanel {
-  height: 92px;
-  bottom: -92px;
-  padding: 16px 22px 8px;
+  height: 64px;
+  bottom: -64px;
+  padding: 12px 22px 8px;
 }
 
 .landscape .phoneScreen.showInfo .infoPanel {
-  transform: translateY(-92px);
+  transform: translateY(-64px);
 }
 
 .landscape .phoneScreen.showInfo .wallpaperWrapper {
-  transform: translateY(-82px); /* Pushes up slightly less in landscape due to compact height */
+  transform: translateY(-53px);
 }
 
 .landscape .infoTitle {
