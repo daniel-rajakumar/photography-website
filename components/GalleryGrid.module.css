@@ -4,13 +4,15 @@
   align-items: center;
   gap: 6rem;
   padding: 3rem 1rem 8rem;
-  max-width: 600px;
+  width: 100%;
+  max-width: 1000px;
   margin: 0 auto;
   background: transparent;
 }
 
 .card {
   position: relative;
+  width: 100%;
   animation: scaleFadeIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
   will-change: transform, opacity;
 }
@@ -350,8 +352,10 @@
 
 /* Landscape Orientation Overrides */
 .phoneContainer.landscape {
-  width: 720px;
-  height: 375px;
+  width: 100%;
+  max-width: 960px;
+  height: auto;
+  aspect-ratio: 720 / 375;
 }
 
 .landscape .phoneBezel {
