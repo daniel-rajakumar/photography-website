@@ -69,8 +69,7 @@ export const ALL_PHOTOS_QUERY = `*[_type == "photo"] | order(order asc, _created
   "captureDateTime": coalesce(
     image.asset->metadata.exif.DateTimeOriginal,
     image.asset->metadata.exif.DateTimeDigitized,
-    image.asset->metadata.image.ModifyDate,
-    image.asset->_createdAt
+    image.asset->metadata.image.ModifyDate
   ),
   alt,
   location,

@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { ContentCreatedInput } from "../components/ContentCreatedInput";
 import { LocationInput } from "../components/LocationInput";
 
 export const photo = defineType({
@@ -26,6 +27,16 @@ export const photo = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "contentCreated",
+      title: "Time and date",
+      type: "string",
+      description: "Read from the selected image metadata.",
+      readOnly: true,
+      components: {
+        input: ContentCreatedInput,
+      },
+    }),
+    defineField({
       name: "phone",
       title: "Phone Model",
       type: "string",
@@ -46,7 +57,7 @@ export const photo = defineType({
       type: "image",
       options: {
         hotspot: true,
-        metadata: ["exif", "location"],
+        metadata: ["exif", "image", "location"],
       },
       validation: (Rule) => Rule.required(),
     }),
