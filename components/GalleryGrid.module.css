@@ -353,6 +353,13 @@
     padding: 0.9rem;
     border-radius: 16px;
   }
+  .card:has(.phoneContainer.landscape) {
+    height: 614px;
+  }
+  .phoneContainer.landscape {
+    width: 614px !important;
+    height: 320px !important;
+  }
 }
 
 /* Landscape Orientation Overrides */
@@ -454,7 +461,7 @@
 @media (max-width: 768px) {
   .card:has(.phoneContainer.landscape) {
     width: 100%;
-    height: calc(min(100vw - 16px, 420px) * 1.73);
+    height: 720px;
     overflow: hidden;
     position: relative;
     display: flex;
@@ -464,8 +471,8 @@
 
   .phoneContainer.landscape {
     position: absolute;
-    width: calc(min(100vw - 16px, 420px) * 1.73) !important;
-    height: min(100vw - 16px, 420px) !important;
+    width: 720px !important;
+    height: 375px !important;
     max-width: none !important;
     transform: rotate(90deg);
     margin: 0 !important;
