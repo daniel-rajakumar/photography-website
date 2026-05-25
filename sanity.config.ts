@@ -14,6 +14,17 @@ export default defineConfig({
   schema: {
     types: schemaTypes,
   },
+  document: {
+    actions: (prev, context) => {
+      if (context.schemaType === "photo") {
+        return prev.filter(
+          (originalAction) =>
+            !["create", "duplicate", "delete"].includes(originalAction.action as string)
+        );
+      }
+      return prev;
+    },
+  },
   plugins: [
     structureTool({
       structure: (S) =>

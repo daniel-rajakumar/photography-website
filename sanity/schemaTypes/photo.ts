@@ -14,6 +14,14 @@ export const photo = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "filename",
+      title: "File Name",
+      type: "string",
+      readOnly: true,
+      hidden: true,
+      description: "Used by the sync script to track the source file.",
+    }),
+    defineField({
       name: "category",
       title: "Category",
       type: "string",
@@ -25,6 +33,12 @@ export const photo = defineType({
         layout: "radio",
       },
       validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "date",
+      title: "Date",
+      type: "datetime",
+      description: "Date the photo was taken (populated by sync script)",
     }),
     defineField({
       name: "contentCreated",

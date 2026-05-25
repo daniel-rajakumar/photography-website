@@ -67,6 +67,7 @@ export const ALL_PHOTOS_QUERY = `*[_type == "photo"] | order(order asc, _created
   "imageWidth": image.asset->metadata.dimensions.width,
   "imageHeight": image.asset->metadata.dimensions.height,
   "captureDateTime": coalesce(
+    date,
     image.asset->metadata.exif.DateTimeOriginal,
     image.asset->metadata.exif.DateTimeDigitized,
     image.asset->metadata.image.ModifyDate
