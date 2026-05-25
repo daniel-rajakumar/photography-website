@@ -68,7 +68,7 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
                     <div className={styles.dynamicIsland} />
 
                     {/* Image Info Panel (revealed on hover/swipe up) */}
-                    <div className={styles.infoPanel}>
+                    <div className={styles.infoPanel} onClick={(e) => e.stopPropagation()}>
                       <h4 className={styles.infoTitle}>{photo.title}</h4>
                       <div className={styles.infoMetaLine}>
                         <p className={styles.infoLocation}>
