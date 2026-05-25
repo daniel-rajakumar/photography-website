@@ -545,7 +545,7 @@
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 16px 22px 24px;
+  padding: 16px 22px 8px;
   z-index: 5;
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
@@ -560,42 +560,39 @@
 
 .infoTitle {
   font-family: var(--font-sans);
-  font-size: 0.85rem;
+  font-size: 1.5rem;
   font-weight: 600;
   color: var(--color-text-primary);
-  margin: 0 0 3px 0;
+  margin: 0;
   line-height: 1.2;
 }
 
 .infoLocation {
   font-family: var(--font-sans);
-  font-size: 0.7rem;
+  font-size: 0.78rem;
   font-weight: 400;
   color: var(--color-gold);
   margin: 0;
+  padding-bottom: 4px;
   line-height: 1.2;
   display: flex;
   align-items: center;
 }
 
-.infoMetaLine {
+.infoRow {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   width: 100%;
-  margin-top: 4px;
 }
 
-.infoDeviceGroup {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
+.infoRow + .infoRow {
+  margin-top: 6px;
 }
 
 .infoCaptureDate {
   font-family: var(--font-sans);
-  font-size: 0.62rem;
+  font-size: 0.7rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.52);
   margin: 0;
@@ -606,7 +603,7 @@
 
 .infoDevice {
   font-family: var(--font-sans);
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.35);
   margin: 0;
@@ -618,7 +615,7 @@
 .landscape .infoPanel {
   height: 92px;
   bottom: -92px;
-  padding: 13px 22px 20px;
+  padding: 16px 22px 8px;
 }
 
 .landscape .phoneScreen.showInfo .infoPanel {
@@ -629,18 +626,13 @@
   transform: translateY(-82px); /* Pushes up slightly less in landscape due to compact height */
 }
 
-.landscape .infoDivider {
-  margin: 2px 0 4px 0;
-}
-
 .landscape .infoTitle {
-  font-size: 0.78rem;
-  margin-bottom: 0;
+  font-size: 1.35rem;
   white-space: nowrap;
 }
 
 .landscape .infoLocation {
-  font-size: 0.62rem;
+  font-size: 0.7rem;
   white-space: nowrap;
 }
 
@@ -651,11 +643,11 @@
 }
 
 .landscape .infoCaptureDate {
-  font-size: 0.56rem;
+  font-size: 0.62rem;
   white-space: nowrap;
 }
 
 .landscape .infoDevice {
-  font-size: 0.58rem;
+  font-size: 0.65rem;
   white-space: nowrap;
 }
