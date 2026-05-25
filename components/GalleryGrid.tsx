@@ -10,6 +10,54 @@ interface GalleryGridProps {
   photos: SanityPhoto[];
 }
 
+function parsePhotoDateTime(value?: string) {
+  if (!value) return null;
+
+  const exifMatch = value.match(
+    /^(\d{4}):(\d{2}):(\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?$/
+  );
+
+  if (exifMatch) {
+    const [, year, month, day, hour, minute, second = "0"] = exifMatch;
+    return new Date(
+      Number(year),
+      Number(month) - 1,
+      Number(day),
+      Number(hour),
+      Number(minute),
+      Number(second)
+    );
+  }
+
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function formatCaptureDate(value?: string) {
+  const date = parsePhotoDateTime(value);
+
+  if (!date) return "";
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })
+    .format(date)
+    .toUpperCase();
+}
+
+function formatCaptureTime(value?: string) {
+  const date = parsePhotoDateTime(value);
+
+  if (!date) return "9:41";
+
+  return new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date);
+}
+
 export default function GalleryGrid({ photos }: GalleryGridProps) {
   const [activePhotoInfoId, setActivePhotoInfoId] = useState<string | null>(null);
 
@@ -19,6 +67,8 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
         {photos.map((photo, index) => {
           const imageUrl = urlFor(photo.image).auto("format").url();
           const isHorizontal = photo.imageWidth && photo.imageHeight ? photo.imageWidth > photo.imageHeight : false;
+          const captureDate = formatCaptureDate(photo.captureDateTime);
+          const captureTime = formatCaptureTime(photo.captureDateTime);
 
           return (
             <article
@@ -46,7 +96,7 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
                   >
                     {/* Status Bar */}
                     <div className={styles.statusBar}>
-                      <span className={styles.time}>9:41</span>
+                      <span className={styles.time}>{captureTime}</span>
                       <div className={styles.statusIcons}>
                         {/* Signal Strength */}
                         <svg width="17" height="11" viewBox="0 0 17 11" className={styles.signalIcon}>
@@ -71,7 +121,9 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
                     <div className={styles.infoPanel} onClick={(e) => e.stopPropagation()}>
                       <div className={styles.infoRow}>
                         <h4 className={styles.infoTitle}>{photo.title}</h4>
-                        <p className={styles.infoCaptureDate}>APR 25, 2026</p>
+                        {captureDate && (
+                          <p className={styles.infoCaptureDate}>{captureDate}</p>
+                        )}
                       </div>
                       <div className={styles.infoRow}>
                         <p className={styles.infoLocation}>

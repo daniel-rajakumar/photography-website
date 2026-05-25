@@ -44,7 +44,10 @@ export const photo = defineType({
       name: "image",
       title: "Image",
       type: "image",
-      options: { hotspot: true },
+      options: {
+        hotspot: true,
+        metadata: ["exif", "location"],
+      },
       validation: (Rule) => Rule.required(),
     }),
     defineField({
