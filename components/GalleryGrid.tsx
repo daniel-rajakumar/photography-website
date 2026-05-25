@@ -68,6 +68,25 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
                     {/* Dynamic Island */}
                     <div className={styles.dynamicIsland} />
 
+                    {/* iOS Slide-down Notification Banner (Image Info) */}
+                    <div className={styles.notificationBanner}>
+                      <div className={styles.notificationHeader}>
+                        <div className={styles.appIcon}>
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M4 4h3l2-3h6l2 3h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a6 6 0 1 0 0 12 6 6 0 0 0 0-12zm0 2a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/>
+                          </svg>
+                        </div>
+                        <span className={styles.appName}>Lumina Camera</span>
+                        <span className={styles.notificationTime}>now</span>
+                      </div>
+                      <div className={styles.notificationBody}>
+                        <h4 className={styles.photoTitle}>{photo.title}</h4>
+                        <p className={styles.photoMeta}>
+                          {photo.location ? `${photo.location} • ` : ""}{photo.phone}
+                        </p>
+                      </div>
+                    </div>
+
                     {/* Image Wallpaper */}
                     <div className={styles.wallpaperWrapper}>
                       <Image
