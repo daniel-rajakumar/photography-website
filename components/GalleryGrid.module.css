@@ -452,13 +452,23 @@
 
 /* Responsive adjustment for Landscape on mobile screen viewports */
 @media (max-width: 768px) {
-  .phoneContainer.landscape {
+  .card:has(.phoneContainer.landscape) {
     width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 9.25;
-    max-width: 520px;
+    height: calc(min(100vw - 16px, 420px) * 1.73);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .phoneContainer.landscape {
+    position: absolute;
+    width: calc(min(100vw - 16px, 420px) * 1.73) !important;
+    height: min(100vw - 16px, 420px) !important;
+    max-width: none !important;
     transform: rotate(90deg);
-    margin: 110px auto;
+    margin: 0 !important;
   }
   
   .landscape .phoneBezel {
