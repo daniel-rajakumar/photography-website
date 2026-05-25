@@ -15,6 +15,7 @@ interface LightBoxProps {
 
 export default function LightBox({ photo, photos, onClose, onNavigate }: LightBoxProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const imageWrapperRef = useRef<HTMLDivElement>(null);
 
   const currentIndex = photo ? photos.findIndex((p) => p._id === photo._id) : -1;
   const canPrev = currentIndex > 0;
@@ -48,12 +49,18 @@ export default function LightBox({ photo, photos, onClose, onNavigate }: LightBo
     return () => window.removeEventListener("keydown", handleKey);
   }, [photo, goNext, goPrev]);
 
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDialogElement>) => {
-    if (e.target === dialogRef.current) onClose();
+  const handleOutsideClick = (e: React.MouseEvent) => {
+    if (
+      e.target === dialogRef.current ||
+      e.target === e.currentTarget ||
+      e.target === imageWrapperRef.current
+    ) {
+      onClose();
+    }
   };
 
   const imageUrl = photo
-    ? urlFor(photo.image).width(1600).auto("format").url()
+    ? urlFor(photo.image).auto("format").url()
     : null;
 
   return (
@@ -61,10 +68,10 @@ export default function LightBox({ photo, photos, onClose, onNavigate }: LightBo
       ref={dialogRef}
       className={styles.dialog}
       onClose={onClose}
-      onClick={handleBackdropClick}
+      onClick={handleOutsideClick}
       aria-label={photo ? `Lightbox: ${photo.title}` : "Image lightbox"}
     >
-      <div className={styles.content} onClick={(e) => e.stopPropagation()}>
+      <div className={styles.content} onClick={handleOutsideClick}>
         {/* Close */}
         <button
           className={styles.closeBtn}
@@ -91,7 +98,7 @@ export default function LightBox({ photo, photos, onClose, onNavigate }: LightBo
         </button>
 
         {/* Image */}
-        <div className={styles.imageWrapper}>
+        <div ref={imageWrapperRef} className={styles.imageWrapper}>
           {photo && imageUrl && (
             <Image
               key={photo._id}
@@ -101,6 +108,7 @@ export default function LightBox({ photo, photos, onClose, onNavigate }: LightBo
               height={photo.imageHeight || 1200}
               className={styles.image}
               priority
+              unoptimized
               sizes="(max-width: 768px) 100vw, 90vw"
             />
           )}

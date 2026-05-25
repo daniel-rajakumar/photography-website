@@ -1,36 +1,33 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import type { SanityPhoto, Category } from "@/lib/sanity";
+import type { SanityPhoto } from "@/lib/sanity";
 import GalleryGrid from "@/components/GalleryGrid";
 import CategoryFilter from "@/components/CategoryFilter";
 import styles from "@/app/page.module.css";
 
-const categories: Category[] = ["all", "portrait", "landscape"];
-
 export default function GalleryClient({ photos }: { photos: SanityPhoto[] }) {
-  const [activeCategory, setActiveCategory] = useState<Category>("all");
+  const [activePhone, setActivePhone] = useState<string>("all");
+
+  const phoneCategories = useMemo(() => {
+    const phones = Array.from(new Set(photos.map((p) => p.phone).filter(Boolean)));
+    phones.sort();
+    return ["all", ...phones];
+  }, [photos]);
 
   const filteredPhotos = useMemo(() => {
-    if (activeCategory === "all") return photos;
-    if (activeCategory === "portrait") {
-      return photos.filter((p) => !(p.imageWidth && p.imageHeight ? p.imageWidth > p.imageHeight : false));
-    }
-    if (activeCategory === "landscape") {
-      return photos.filter((p) => p.imageWidth && p.imageHeight ? p.imageWidth > p.imageHeight : false);
-    }
-    return photos;
-  }, [activeCategory, photos]);
+    if (activePhone === "all") return photos;
+    return photos.filter((p) => p.phone === activePhone);
+  }, [activePhone, photos]);
 
   const counts = useMemo(() => {
-    const allCount = photos.length;
-    const landscapeCount = photos.filter((p) => p.imageWidth && p.imageHeight ? p.imageWidth > p.imageHeight : false).length;
-    const portraitCount = allCount - landscapeCount;
-    return {
-      all: allCount,
-      portrait: portraitCount,
-      landscape: landscapeCount,
-    };
+    const cnts: Record<string, number> = { all: photos.length };
+    photos.forEach((p) => {
+      if (p.phone) {
+         cnts[p.phone] = (cnts[p.phone] ?? 0) + 1;
+      }
+    });
+    return cnts;
   }, [photos]);
 
   return (
@@ -52,8 +49,9 @@ export default function GalleryClient({ photos }: { photos: SanityPhoto[] }) {
       <section className={styles.gallerySection} aria-label="Photo gallery">
         <div className={`${styles.filterBar} container`}>
           <CategoryFilter
-            active={activeCategory}
-            onChange={setActiveCategory}
+            active={activePhone}
+            onChange={setActivePhone}
+            categories={phoneCategories}
             counts={counts}
           />
           <span className={styles.resultCount} aria-live="polite">
