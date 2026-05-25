@@ -17,9 +17,11 @@ export interface LocalPhoto {
   order: number;
   uploadIndex?: number;
   uploadTime?: string;
+  hasOriginal?: boolean;
 }
 
 const PHOTOS_DIR = path.join(process.cwd(), "public", "photos");
+const ORIGINALS_DIR = path.join(PHOTOS_DIR, "originals");
 const DATA_FILE = path.join(process.cwd(), "data", "photos.json");
 const VALID_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".avif"];
 
@@ -65,15 +67,19 @@ export async function getLocalPhotos(): Promise<LocalPhoto[]> {
     savedMetadata = [];
   }
 
-  // Read actual files in the folder
-  const files = fs.readdirSync(PHOTOS_DIR).filter((file) => {
-    const ext = path.extname(file).toLowerCase();
-    return VALID_EXTENSIONS.includes(ext);
-  });
+  // Read actual files in the folder (excluding subdirectories)
+  const files = fs.readdirSync(PHOTOS_DIR, { withFileTypes: true })
+    .filter(dirent => dirent.isFile())
+    .map(dirent => dirent.name)
+    .filter((file) => {
+      const ext = path.extname(file).toLowerCase();
+      return VALID_EXTENSIONS.includes(ext);
+    });
 
   const allPhotos: LocalPhoto[] = await Promise.all(files.map(async (file) => {
     const existingMeta = savedMetadata.find((meta) => meta.filename === file);
     if (existingMeta) {
+      existingMeta.hasOriginal = fs.existsSync(path.join(ORIGINALS_DIR, file));
       return existingMeta;
     }
 
@@ -102,6 +108,8 @@ export async function getLocalPhotos(): Promise<LocalPhoto[]> {
       console.error(`Failed to read EXIF for ${file}:`, e);
     }
 
+    const hasOriginal = fs.existsSync(path.join(ORIGINALS_DIR, file));
+
     return {
       filename: file,
       title: formattedTitle,
@@ -113,6 +121,7 @@ export async function getLocalPhotos(): Promise<LocalPhoto[]> {
       featured: false,
       order: 999,
       uploadTime: new Date().toISOString(),
+      hasOriginal,
     };
   }));
 
@@ -175,6 +184,14 @@ export async function savePhotoMetadata(updatedPhotos: LocalPhoto[]): Promise<Lo
           
           if (newPath !== oldPath) {
             fs.renameSync(oldPath, newPath);
+            
+            // Rename original if it exists
+            const oldOriginalPath = path.join(ORIGINALS_DIR, currentFilename);
+            if (fs.existsSync(oldOriginalPath)) {
+              const newOriginalPath = path.join(ORIGINALS_DIR, newFilename);
+              fs.renameSync(oldOriginalPath, newOriginalPath);
+            }
+
             currentFilename = newFilename;
           }
         }
@@ -182,6 +199,7 @@ export async function savePhotoMetadata(updatedPhotos: LocalPhoto[]): Promise<Lo
 
       // Update filename in JSON data
       newPhoto.filename = currentFilename;
+      newPhoto.hasOriginal = fs.existsSync(path.join(ORIGINALS_DIR, currentFilename));
       
       // Persist uploadTime if missing in JSON but present in object
       if (!oldPhoto.uploadTime && newPhoto.uploadTime) {

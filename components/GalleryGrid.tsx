@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import type { LocalPhoto } from "@/lib/photos";
+import BeforeAfterImage from "./BeforeAfterImage";
 import styles from "./GalleryGrid.module.css";
 
 interface GalleryGridProps {
@@ -141,15 +142,23 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
 
                     {/* Image Wallpaper */}
                     <div className={styles.wallpaperWrapper}>
-                      <Image
-                        src={imageUrl}
-                        alt={photo.alt}
-                        fill
-                        className={styles.wallpaper}
-                        loading={index < 2 ? "eager" : "lazy"}
-                        priority={index === 0}
-                        sizes="(max-width: 768px) 100vw, 420px"
-                      />
+                      {photo.hasOriginal ? (
+                        <BeforeAfterImage 
+                          editedSrc={imageUrl} 
+                          originalSrc={`/photos/originals/${photo.filename}`} 
+                          alt={photo.alt} 
+                        />
+                      ) : (
+                        <Image
+                          src={imageUrl}
+                          alt={photo.alt}
+                          fill
+                          className={styles.wallpaper}
+                          loading={index < 2 ? "eager" : "lazy"}
+                          priority={index === 0}
+                          sizes="(max-width: 768px) 100vw, 420px"
+                        />
+                      )}
                     </div>
 
                     {/* Home Indicator bar */}
