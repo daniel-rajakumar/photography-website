@@ -31,6 +31,7 @@ export interface SanityPhoto {
   location?: string;
   featured?: boolean;
   order?: number;
+  captureDateTime?: string;
   // Populated by the GROQ asset-> dereference
   imageWidth?: number;
   imageHeight?: number;
@@ -49,6 +50,13 @@ export const ALL_PHOTOS_QUERY = `*[_type == "photo"] | order(order asc, _created
       _id,
       url,
       metadata {
+        exif {
+          DateTimeOriginal,
+          DateTimeDigitized
+        },
+        image {
+          ModifyDate
+        },
         dimensions {
           width,
           height
@@ -58,6 +66,12 @@ export const ALL_PHOTOS_QUERY = `*[_type == "photo"] | order(order asc, _created
   },
   "imageWidth": image.asset->metadata.dimensions.width,
   "imageHeight": image.asset->metadata.dimensions.height,
+  "captureDateTime": coalesce(
+    image.asset->metadata.exif.DateTimeOriginal,
+    image.asset->metadata.exif.DateTimeDigitized,
+    image.asset->metadata.image.ModifyDate,
+    image.asset->_createdAt
+  ),
   alt,
   location,
   featured,
