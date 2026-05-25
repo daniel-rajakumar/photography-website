@@ -81,7 +81,10 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
                             </>
                           ) : "Unknown Location"}
                         </p>
-                        <p className={styles.infoDevice}>Shot on {photo.phone}</p>
+                        <div className={styles.infoDeviceGroup}>
+                          <p className={styles.infoCaptureDate}>Apr 25, 2026</p>
+                          <p className={styles.infoDevice}>Shot on {photo.phone}</p>
+                        </div>
                       </div>
                     </div>
 
