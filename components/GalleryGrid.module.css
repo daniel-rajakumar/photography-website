@@ -100,7 +100,7 @@
   overflow: hidden;
   border: none;
   padding: 0;
-  cursor: default;
+  cursor: pointer;
   background: #000;
   text-align: left;
   outline: none;
@@ -204,11 +204,11 @@
   transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.phoneScreen:hover .wallpaperWrapper {
+.phoneScreen.showInfo .wallpaperWrapper {
   transform: translateY(-75px);
 }
 
-.phoneScreen:hover .wallpaper {
+.phoneScreen.showInfo .wallpaper {
   transform: scale(1.05);
 }
 
@@ -277,7 +277,7 @@
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease;
 }
 
-.phoneScreen:hover .phoneOverlay {
+.phoneScreen.showInfo .phoneOverlay {
   transform: translateY(-4px);
   background: rgba(10, 10, 12, 0.55);
 }
@@ -311,7 +311,7 @@
   transition: color 0.3s ease;
 }
 
-.phoneScreen:hover .tapToView {
+.phoneScreen.showInfo .tapToView {
   color: var(--color-text-primary);
 }
 
@@ -448,7 +448,7 @@
   padding: 1rem 1.15rem;
 }
 
-.landscape .phoneScreen:hover .phoneOverlay {
+.landscape .phoneScreen.showInfo .phoneOverlay {
   transform: translateX(-4px);
 }
 
@@ -554,7 +554,7 @@
   text-align: left;
 }
 
-.phoneScreen:hover .infoPanel {
+.phoneScreen.showInfo .infoPanel {
   transform: translateY(-90px); /* Slides up to bottom: 0px */
 }
 
@@ -603,11 +603,11 @@
   padding: 12px 22px 18px;
 }
 
-.landscape .phoneScreen:hover .infoPanel {
+.landscape .phoneScreen.showInfo .infoPanel {
   transform: translateY(-75px);
 }
 
-.landscape .phoneScreen:hover .wallpaperWrapper {
+.landscape .phoneScreen.showInfo .wallpaperWrapper {
   transform: translateY(-65px); /* Pushes up slightly less in landscape due to compact height */
 }
 

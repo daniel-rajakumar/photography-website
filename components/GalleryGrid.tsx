@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import type { SanityPhoto } from "@/lib/sanity";
 import { urlFor } from "@/lib/sanity";
@@ -10,6 +11,7 @@ interface GalleryGridProps {
 }
 
 export default function GalleryGrid({ photos }: GalleryGridProps) {
+  const [activePhotoInfoId, setActivePhotoInfoId] = useState<string | null>(null);
 
   return (
     <>
@@ -36,8 +38,10 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
                 {/* Outer Titanium Bezel */}
                 <div className={styles.phoneBezel}>
                   {/* Screen Content */}
-                  <div
-                    className={styles.phoneScreen}
+                  <button
+                    className={`${styles.phoneScreen} ${activePhotoInfoId === photo._id ? styles.showInfo : ""}`}
+                    onClick={() => setActivePhotoInfoId(activePhotoInfoId === photo._id ? null : photo._id)}
+                    aria-label={`Toggle info for photo: ${photo.title}`}
                     id={`gallery-photo-${photo._id}`}
                   >
                     {/* Status Bar */}
@@ -97,7 +101,7 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
 
                     {/* Home Indicator bar */}
                     <div className={styles.homeIndicator} />
-                  </div>
+                  </button>
                 </div>
               </div>
             </article>
