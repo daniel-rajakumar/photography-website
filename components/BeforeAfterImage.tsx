@@ -16,6 +16,7 @@ export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props)
   const [isDragging, setIsDragging] = useState(false);
   const [hasDragged, setHasDragged] = useState(false);
   const [startY, setStartY] = useState(0);
+  const [startPos, setStartPos] = useState(100);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const updatePos = (clientY: number) => {
@@ -24,8 +25,8 @@ export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props)
     const deltaY = clientY - startY;
     const deltaPercent = (deltaY / rect.height) * 100;
     
-    // Start from 100% (bottom), apply drag delta, clamp between 0 and 100
-    const newPercent = Math.max(0, Math.min(100, 100 + deltaPercent));
+    // Start from startPos, apply drag delta, clamp between 0 and 100
+    const newPercent = Math.max(0, Math.min(100, startPos + deltaPercent));
     setSliderPos(newPercent);
   };
 
@@ -33,6 +34,7 @@ export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props)
     setIsDragging(true);
     setHasDragged(false);
     setStartY(e.clientY);
+    setStartPos(sliderPos);
     e.currentTarget.setPointerCapture(e.pointerId);
   };
 
@@ -48,7 +50,12 @@ export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props)
   const handlePointerUp = (e: React.PointerEvent) => {
     setIsDragging(false);
     e.currentTarget.releasePointerCapture(e.pointerId);
-    setSliderPos(100);
+    
+    if (sliderPos < 50) {
+      setSliderPos(0);
+    } else {
+      setSliderPos(100);
+    }
   };
 
   const handleMouseEnter = () => {
@@ -86,14 +93,21 @@ export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props)
       <div 
         className={styles.editedWrapper}
         style={{
-          clipPath: `polygon(0 0, 100% 0, 100% ${sliderPos}%, 0 ${sliderPos}%)`
+          clipPath: `polygon(0 0, 100% 0, 100% ${sliderPos}%, 0 ${sliderPos}%)`,
+          transition: isDragging ? "none" : "clip-path 0.4s cubic-bezier(0.32, 0.72, 0, 1)"
         }}
       >
         <Image src={editedSrc} alt={alt} fill className={styles.image} sizes="(max-width: 768px) 100vw, 50vw" />
       </div>
 
       {/* Slider Line (Acts as Home Indicator) */}
-      <div className={styles.sliderLine} style={{ top: `${sliderPos}%` }}>
+      <div 
+        className={styles.sliderLine} 
+        style={{ 
+          top: `max(12px, ${sliderPos}%)`,
+          transition: isDragging ? "none" : "top 0.4s cubic-bezier(0.32, 0.72, 0, 1)"
+        }}
+      >
         <div className={styles.sliderHandle} />
       </div>
     </div>
