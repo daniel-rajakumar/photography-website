@@ -31,8 +31,10 @@
 /* Phone Container & Dimensions */
 .phoneContainer {
   position: relative;
-  width: 375px;
-  height: 760px;
+  --phone-width: 375px;
+  --phone-height: 760px;
+  width: var(--phone-width);
+  height: var(--phone-height);
   margin: 0 auto;
 }
 
@@ -330,8 +332,8 @@
 /* Responsive adjustment for small screens */
 @media (max-width: 420px) {
   .phoneContainer {
-    width: 320px;
-    height: 648px;
+    --phone-width: min(320px, calc(100vw - 2rem));
+    --phone-height: calc(var(--phone-width) * 2.025);
   }
   .phoneBezel {
     border-width: 9px;
@@ -352,13 +354,6 @@
     right: 0.8rem;
     padding: 0.9rem;
     border-radius: 16px;
-  }
-  .card:has(.phoneContainer.landscape) {
-    height: 614px;
-  }
-  .phoneContainer.landscape {
-    width: 614px !important;
-    height: 320px !important;
   }
 }
 
@@ -460,8 +455,9 @@
 /* Responsive adjustment for Landscape on mobile screen viewports */
 @media (max-width: 768px) {
   .card:has(.phoneContainer.landscape) {
+    --landscape-phone-width: min(375px, calc(100vw - 2rem));
     width: 100%;
-    height: 720px;
+    height: calc(var(--landscape-phone-width) * 1.92);
     overflow: hidden;
     position: relative;
     display: flex;
@@ -471,8 +467,8 @@
 
   .phoneContainer.landscape {
     position: absolute;
-    width: 720px !important;
-    height: 375px !important;
+    width: calc(var(--landscape-phone-width) * 1.92) !important;
+    height: var(--landscape-phone-width) !important;
     max-width: none !important;
     transform: rotate(90deg);
     margin: 0 !important;
@@ -527,6 +523,12 @@
   /* hide buttons on small viewports landscape mockup */
   .landscape .physicalButton {
     display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .card:has(.phoneContainer.landscape) {
+    --landscape-phone-width: min(320px, calc(100vw - 2rem));
   }
 }
 
@@ -612,4 +614,3 @@
 .landscape .infoDivider {
   margin: 2px 0 4px 0;
 }
-
