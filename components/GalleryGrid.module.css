@@ -586,6 +586,24 @@
   margin-top: 4px;
 }
 
+.infoDeviceGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.infoCaptureDate {
+  font-family: var(--font-sans);
+  font-size: 0.62rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.52);
+  margin: 0;
+  line-height: 1.1;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
 .infoDevice {
   font-family: var(--font-sans);
   font-size: 0.65rem;
@@ -598,19 +616,46 @@
 
 /* Landscape Overrides for Info Panel */
 .landscape .infoPanel {
-  height: 75px;
-  bottom: -75px;
-  padding: 12px 22px 18px;
+  height: 92px;
+  bottom: -92px;
+  padding: 13px 22px 20px;
 }
 
 .landscape .phoneScreen.showInfo .infoPanel {
-  transform: translateY(-75px);
+  transform: translateY(-92px);
 }
 
 .landscape .phoneScreen.showInfo .wallpaperWrapper {
-  transform: translateY(-65px); /* Pushes up slightly less in landscape due to compact height */
+  transform: translateY(-82px); /* Pushes up slightly less in landscape due to compact height */
 }
 
 .landscape .infoDivider {
   margin: 2px 0 4px 0;
+}
+
+.landscape .infoTitle {
+  font-size: 0.78rem;
+  margin-bottom: 0;
+  white-space: nowrap;
+}
+
+.landscape .infoLocation {
+  font-size: 0.62rem;
+  white-space: nowrap;
+}
+
+.landscape .infoMetaLine {
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-top: 0;
+}
+
+.landscape .infoCaptureDate {
+  font-size: 0.56rem;
+  white-space: nowrap;
+}
+
+.landscape .infoDevice {
+  font-size: 0.58rem;
+  white-space: nowrap;
 }
