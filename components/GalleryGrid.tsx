@@ -68,23 +68,21 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
                     {/* Dynamic Island */}
                     <div className={styles.dynamicIsland} />
 
-                    {/* iOS Slide-down Notification Banner (Image Info) */}
-                    <div className={styles.notificationBanner}>
-                      <div className={styles.notificationHeader}>
-                        <div className={styles.appIcon}>
-                          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M4 4h3l2-3h6l2 3h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm8 3a6 6 0 1 0 0 12 6 6 0 0 0 0-12zm0 2a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/>
-                          </svg>
-                        </div>
-                        <span className={styles.appName}>Lumina Camera</span>
-                        <span className={styles.notificationTime}>now</span>
-                      </div>
-                      <div className={styles.notificationBody}>
-                        <h4 className={styles.photoTitle}>{photo.title}</h4>
-                        <p className={styles.photoMeta}>
-                          {photo.location ? `${photo.location} • ` : ""}{photo.phone}
-                        </p>
-                      </div>
+                    {/* Image Info Panel (revealed on hover/swipe up) */}
+                    <div className={styles.infoPanel}>
+                      <h4 className={styles.infoTitle}>{photo.title}</h4>
+                      <p className={styles.infoLocation}>
+                        {photo.location ? (
+                          <>
+                            <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor" style={{display:"inline-block",marginRight:4,verticalAlign:"middle"}}>
+                              <path d="M6 1C4.07 1 2.5 2.57 2.5 4.5C2.5 7 6 11 6 11C6 11 9.5 7 9.5 4.5C9.5 2.57 7.93 1 6 1ZM6 6C5.17 6 4.5 5.33 4.5 4.5C4.5 3.67 5.17 3 6 3C6.83 3 7.5 3.67 7.5 4.5C7.5 5.33 6.83 6 6 6Z"/>
+                            </svg>
+                            {photo.location}
+                          </>
+                        ) : "Unknown Location"}
+                      </p>
+                      <div className={styles.infoDivider} />
+                      <p className={styles.infoDevice}>Shot on {photo.phone}</p>
                     </div>
 
                     {/* Image Wallpaper */}

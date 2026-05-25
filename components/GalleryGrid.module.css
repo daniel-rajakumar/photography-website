@@ -192,6 +192,7 @@
   inset: 0;
   z-index: 1;
   overflow: hidden;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .wallpaper {
@@ -199,6 +200,10 @@
   height: 100%;
   object-fit: cover;
   transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.phoneScreen:hover .wallpaperWrapper {
+  transform: translateY(-90px);
 }
 
 .phoneScreen:hover .wallpaper {
@@ -507,102 +512,83 @@
 }
 
 /* ========================================
-   iOS Slide-down Notification Banner (Image Info)
+   iOS Swipe-up Info Panel
    ======================================== */
-.notificationBanner {
+.infoPanel {
   position: absolute;
-  top: -120px;
-  left: 16px;
-  right: 16px;
-  background: rgba(25, 25, 25, 0.65);
+  bottom: -110px; /* Hidden below the screen */
+  left: 0;
+  right: 0;
+  height: 110px;
+  background: rgba(15, 15, 15, 0.85);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  padding: 10px 14px;
-  z-index: 8;
-  opacity: 0;
-  pointer-events: none;
-  box-shadow: 
-    0 10px 30px rgba(0, 0, 0, 0.5),
-    inset 0 1px 1px rgba(255, 255, 255, 0.1);
-  transition: 
-    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.35s ease,
-    top 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.phoneScreen:hover .notificationBanner {
-  top: 55px; /* Just below Dynamic Island in portrait */
-  opacity: 1;
-}
-
-.notificationHeader {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 14px 18px 26px;
+  z-index: 5;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 4px;
-}
-
-.appIcon {
-  width: 14px;
-  height: 14px;
-  background: var(--color-gold);
-  color: #000000;
-  border-radius: 3.5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.appName {
-  font-family: var(--font-sans);
-  font-size: 0.68rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.6);
-  letter-spacing: 0.01em;
-}
-
-.notificationTime {
-  font-family: var(--font-sans);
-  font-size: 0.65rem;
-  color: rgba(255, 255, 255, 0.35);
-  margin-left: auto;
-}
-
-.notificationBody {
+  flex-direction: column;
+  justify-content: flex-start;
   text-align: left;
 }
 
-.photoTitle {
+.phoneScreen:hover .infoPanel {
+  transform: translateY(-110px); /* Slides up to bottom: 0px */
+}
+
+.infoTitle {
   font-family: var(--font-sans);
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: var(--color-text-primary);
-  margin: 0 0 2px 0;
+  margin: 0 0 3px 0;
   line-height: 1.2;
 }
 
-.photoMeta {
+.infoLocation {
   font-family: var(--font-sans);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 400;
-  color: var(--color-text-secondary);
-  margin: 0;
+  color: var(--color-gold);
+  margin: 0 0 6px 0;
   line-height: 1.2;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  display: flex;
+  align-items: center;
 }
 
-/* Landscape Overrides for Notification Banner */
-.landscape .notificationBanner {
-  left: 55px; /* Offset from left bezel where dynamic island is */
-  right: 16px;
-  max-width: 320px;
+.infoDivider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  margin: 4px 0 6px 0;
 }
 
-.landscape .phoneScreen:hover .notificationBanner {
-  top: 40px; /* Just below status bar in landscape */
+.infoDevice {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.35);
+  margin: 0;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+/* Landscape Overrides for Info Panel */
+.landscape .infoPanel {
+  height: 90px;
+  bottom: -90px;
+  padding: 10px 18px 16px;
+}
+
+.landscape .phoneScreen:hover .infoPanel {
+  transform: translateY(-90px);
+}
+
+.landscape .phoneScreen:hover .wallpaperWrapper {
+  transform: translateY(-80px); /* Pushes up slightly less in landscape due to compact height */
+}
+
+.landscape .infoDivider {
+  margin: 2px 0 4px 0;
 }
 
