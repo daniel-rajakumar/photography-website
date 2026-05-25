@@ -2,12 +2,11 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import type { SanityPhoto } from "@/lib/sanity";
-import { urlFor } from "@/lib/sanity";
+import type { LocalPhoto } from "@/lib/photos";
 import styles from "./GalleryGrid.module.css";
 
 interface GalleryGridProps {
-  photos: SanityPhoto[];
+  photos: LocalPhoto[];
 }
 
 function parsePhotoDateTime(value?: string) {
@@ -65,14 +64,14 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
     <>
       <div className={styles.grid} role="list" aria-label="Photo gallery">
         {photos.map((photo, index) => {
-          const imageUrl = urlFor(photo.image).auto("format").url();
-          const isHorizontal = photo.imageWidth && photo.imageHeight ? photo.imageWidth > photo.imageHeight : false;
-          const captureDate = formatCaptureDate(photo.captureDateTime);
-          const captureTime = formatCaptureTime(photo.captureDateTime);
+          const imageUrl = `/photos/${photo.filename}`;
+          const isHorizontal = photo.category === "landscape";
+          const captureDate = formatCaptureDate(photo.date);
+          const captureTime = formatCaptureTime(photo.date);
 
           return (
             <article
-              key={photo._id}
+              key={photo.filename}
               className={styles.card}
               role="listitem"
               style={{ animationDelay: `${Math.min(index * 0.1, 0.8)}s` }}
@@ -89,10 +88,10 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
                 <div className={styles.phoneBezel}>
                   {/* Screen Content */}
                   <button
-                    className={`${styles.phoneScreen} ${activePhotoInfoId === photo._id ? styles.showInfo : ""}`}
-                    onClick={() => setActivePhotoInfoId(activePhotoInfoId === photo._id ? null : photo._id)}
+                    className={`${styles.phoneScreen} ${activePhotoInfoId === photo.filename ? styles.showInfo : ""}`}
+                    onClick={() => setActivePhotoInfoId(activePhotoInfoId === photo.filename ? null : photo.filename)}
                     aria-label={`Toggle info for photo: ${photo.title}`}
-                    id={`gallery-photo-${photo._id}`}
+                    id={`gallery-photo-${photo.filename}`}
                   >
                     {/* Status Bar */}
                     <div className={styles.statusBar}>
@@ -149,7 +148,6 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
                         className={styles.wallpaper}
                         loading={index < 2 ? "eager" : "lazy"}
                         priority={index === 0}
-                        unoptimized
                         sizes="(max-width: 768px) 100vw, 420px"
                       />
                     </div>

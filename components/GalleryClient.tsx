@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import type { SanityPhoto } from "@/lib/sanity";
+import type { LocalPhoto } from "@/lib/photos";
 import GalleryGrid from "@/components/GalleryGrid";
 import CategoryFilter from "@/components/CategoryFilter";
 import styles from "@/app/page.module.css";
 
-export default function GalleryClient({ photos }: { photos: SanityPhoto[] }) {
+export default function GalleryClient({ photos }: { photos: LocalPhoto[] }) {
   const [activePhone, setActivePhone] = useState<string>("all");
 
   const phoneCategories = useMemo(() => {

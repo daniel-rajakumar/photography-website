@@ -2,22 +2,21 @@
 
 import { useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
-import type { SanityPhoto } from "@/lib/sanity";
-import { urlFor } from "@/lib/sanity";
+import type { LocalPhoto } from "@/lib/photos";
 import styles from "./LightBox.module.css";
 
 interface LightBoxProps {
-  photo: SanityPhoto | null;
-  photos: SanityPhoto[];
+  photo: LocalPhoto | null;
+  photos: LocalPhoto[];
   onClose: () => void;
-  onNavigate: (photo: SanityPhoto) => void;
+  onNavigate: (photo: LocalPhoto) => void;
 }
 
 export default function LightBox({ photo, photos, onClose, onNavigate }: LightBoxProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const imageWrapperRef = useRef<HTMLDivElement>(null);
 
-  const currentIndex = photo ? photos.findIndex((p) => p._id === photo._id) : -1;
+  const currentIndex = photo ? photos.findIndex((p) => p.filename === photo.filename) : -1;
   const canPrev = currentIndex > 0;
   const canNext = currentIndex < photos.length - 1;
 
@@ -60,7 +59,7 @@ export default function LightBox({ photo, photos, onClose, onNavigate }: LightBo
   };
 
   const imageUrl = photo
-    ? urlFor(photo.image).auto("format").url()
+    ? `/photos/${photo.filename}`
     : null;
 
   return (
@@ -101,15 +100,14 @@ export default function LightBox({ photo, photos, onClose, onNavigate }: LightBo
         <div ref={imageWrapperRef} className={styles.imageWrapper}>
           {photo && imageUrl && (
             <Image
-              key={photo._id}
+              key={photo.filename}
               src={imageUrl}
               alt={photo.alt}
-              width={photo.imageWidth || 1600}
-              height={photo.imageHeight || 1200}
+              fill
               className={styles.image}
               priority
-              unoptimized
               sizes="(max-width: 768px) 100vw, 90vw"
+              style={{ objectFit: "contain" }}
             />
           )}
         </div>
