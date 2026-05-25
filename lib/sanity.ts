@@ -19,10 +19,7 @@ export function urlFor(source: SanityImageSource) {
 export type Category =
   | "all"
   | "landscape"
-  | "portrait"
-  | "street"
-  | "abstract"
-  | "architecture";
+  | "portrait";
 
 export interface SanityPhoto {
   _id: string;

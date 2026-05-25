@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { LocationInput } from "../components/LocationInput";
 
 export const photo = defineType({
   name: "photo",
@@ -19,9 +20,6 @@ export const photo = defineType({
         list: [
           { title: "Landscape", value: "landscape" },
           { title: "Portrait", value: "portrait" },
-          { title: "Street", value: "street" },
-          { title: "Abstract", value: "abstract" },
-          { title: "Architecture", value: "architecture" },
         ],
         layout: "radio",
       },
@@ -61,6 +59,9 @@ export const photo = defineType({
       title: "Location",
       type: "string",
       description: "E.g. Tokyo, JP — shown on hover overlay",
+      components: {
+        input: LocationInput,
+      },
     }),
     defineField({
       name: "featured",
