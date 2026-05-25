@@ -28,6 +28,7 @@ export interface SanityPhoto {
   _id: string;
   title: string;
   category: Exclude<Category, "all">;
+  phone: string;
   image: SanityImageSource;
   alt: string;
   location?: string;
@@ -44,6 +45,7 @@ export const ALL_PHOTOS_QUERY = `*[_type == "photo"] | order(order asc, _created
   _id,
   title,
   category,
+  phone,
   image {
     ...,
     asset-> {

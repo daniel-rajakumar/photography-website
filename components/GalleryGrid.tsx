@@ -18,7 +18,7 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
     <>
       <div className={styles.grid} role="list" aria-label="Photo gallery">
         {photos.map((photo, index) => {
-          const imageUrl = urlFor(photo.image).width(800).auto("format").url();
+          const imageUrl = urlFor(photo.image).auto("format").url();
           const isHorizontal = photo.imageWidth && photo.imageHeight ? photo.imageWidth > photo.imageHeight : false;
 
           return (
@@ -77,6 +77,7 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
                         className={styles.wallpaper}
                         loading={index < 2 ? "eager" : "lazy"}
                         priority={index === 0}
+                        unoptimized
                         sizes="(max-width: 768px) 100vw, 420px"
                       />
                     </div>

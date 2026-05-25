@@ -28,6 +28,21 @@ export const photo = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "phone",
+      title: "Phone Model",
+      type: "string",
+      options: {
+        list: [
+          { title: "iPhone 15 Pro", value: "iPhone 15 Pro" },
+          { title: "iPhone 15", value: "iPhone 15" },
+          { title: "iPhone 14 Pro", value: "iPhone 14 Pro" },
+          { title: "iPhone 13 Pro", value: "iPhone 13 Pro" },
+          { title: "Google Pixel 8", value: "Google Pixel 8" },
+        ],
+      },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
       name: "image",
       title: "Image",
       type: "image",

@@ -1,28 +1,27 @@
 "use client";
 
-import { type Category } from "@/lib/sanity";
 import styles from "./CategoryFilter.module.css";
 
-const categories: Category[] = ["all", "portrait", "landscape"];
-
 interface CategoryFilterProps {
-  active: Category;
-  onChange: (category: Category) => void;
+  active: string;
+  onChange: (category: string) => void;
+  categories: string[];
   counts: Record<string, number>;
 }
 
-const LABELS: Record<Category, string> = {
-  all: "All Screens",
-  portrait: "Portrait Phone",
-  landscape: "Landscape Phone",
-  street: "Street",
-  abstract: "Abstract",
-  architecture: "Architecture",
-};
+export default function CategoryFilter({
+  active,
+  onChange,
+  categories,
+  counts,
+}: CategoryFilterProps) {
+  const getLabel = (cat: string) => {
+    if (cat === "all") return "All Phones";
+    return cat;
+  };
 
-export default function CategoryFilter({ active, onChange, counts }: CategoryFilterProps) {
   return (
-    <nav className={styles.filterNav} aria-label="Filter photos by category">
+    <nav className={styles.filterNav} aria-label="Filter photos by phone model">
       <div className={styles.track} role="list">
         {categories.map((cat) => (
           <button
@@ -31,10 +30,10 @@ export default function CategoryFilter({ active, onChange, counts }: CategoryFil
             className={`${styles.pill} ${active === cat ? styles.pillActive : ""}`}
             onClick={() => onChange(cat)}
             aria-pressed={active === cat}
-            aria-label={`Filter: ${LABELS[cat]}`}
-            id={`filter-pill-${cat}`}
+            aria-label={`Filter: ${getLabel(cat)}`}
+            id={`filter-pill-${cat.replace(/\s+/g, "-").toLowerCase()}`}
           >
-            <span>{LABELS[cat]}</span>
+            <span>{getLabel(cat)}</span>
             <span className={styles.count}>{counts[cat] ?? 0}</span>
           </button>
         ))}
