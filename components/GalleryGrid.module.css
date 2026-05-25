@@ -205,7 +205,7 @@
 }
 
 .phoneScreen.showInfo .wallpaperWrapper {
-  transform: translateY(-53px);
+  transform: translateY(-68px);
 }
 
 .phoneScreen.showInfo .wallpaper {
@@ -537,15 +537,15 @@
    ======================================== */
 .infoPanel {
   position: absolute;
-  bottom: -64px; /* Hidden below the screen */
+  bottom: -76px; /* Hidden below the screen */
   left: 0;
   right: 0;
-  height: 64px;
+  height: 76px;
   background: rgba(15, 15, 15, 0.85);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 12px 22px 8px;
+  padding: 12px 22px 20px;
   z-index: 5;
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
@@ -555,7 +555,7 @@
 }
 
 .phoneScreen.showInfo .infoPanel {
-  transform: translateY(-64px); /* Slides up to bottom: 0px */
+  transform: translateY(-76px); /* Slides up to bottom: 0px */
 }
 
 .infoTitle {
