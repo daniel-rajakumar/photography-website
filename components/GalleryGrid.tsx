@@ -162,7 +162,7 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
                     </div>
 
                     {/* Home Indicator bar */}
-                    <div className={styles.homeIndicator} />
+                    {!photo.hasOriginal && <div className={styles.homeIndicator} />}
                   </button>
                 </div>
               </div>
