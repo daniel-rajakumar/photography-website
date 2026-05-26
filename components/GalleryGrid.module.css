@@ -93,7 +93,8 @@
 /* Screen */
 .phoneScreen {
   position: relative;
-  display: block;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100%;
   border-radius: 35px;
@@ -190,11 +191,11 @@
 
 /* Wallpaper Image Background */
 .wallpaperWrapper {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  flex: 1;
+  width: 100%;
   z-index: 1;
   overflow: hidden;
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .wallpaper {
@@ -202,14 +203,6 @@
   height: 100%;
   object-fit: cover;
   transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.phoneScreen.showInfo .wallpaperWrapper {
-  transform: translateY(-80px);
-}
-
-.phoneScreen.showInfo .beforeAfterWallpaperWrapper {
-  transform: none;
 }
 
 .phoneScreen.showInfo .wallpaper {
@@ -547,27 +540,32 @@
 /* ========================================
    iOS Swipe-up Info Panel
    ======================================== */
+.infoWrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 5;
+}
+
+.phoneScreen.showInfo .infoWrapper {
+  grid-template-rows: 1fr;
+}
+
 .infoPanel {
-  position: absolute;
-  bottom: -76px; /* Hidden below the screen */
-  left: 0;
-  right: 0;
-  height: 76px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.infoPanelInner {
   background: rgba(15, 15, 15, 0.85);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 12px 22px 20px;
-  z-index: 5;
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 12px 22px 8px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   text-align: left;
-}
-
-.phoneScreen.showInfo .infoPanel {
-  transform: translateY(-76px); /* Slides up to bottom: 0px */
 }
 
 .infoTitle {
@@ -621,25 +619,12 @@
   margin: 0;
   letter-spacing: 0.03em;
   text-transform: uppercase;
+  text-align: right;
 }
 
 /* Landscape Overrides for Info Panel */
-.landscape .infoPanel {
-  height: 64px;
-  bottom: -64px;
+.landscape .infoPanelInner {
   padding: 12px 22px 8px;
-}
-
-.landscape .phoneScreen.showInfo .infoPanel {
-  transform: translateY(-64px);
-}
-
-.landscape .phoneScreen.showInfo .wallpaperWrapper {
-  transform: translateY(-53px);
-}
-
-.landscape .phoneScreen.showInfo .beforeAfterWallpaperWrapper {
-  transform: none;
 }
 
 .landscape .infoTitle {

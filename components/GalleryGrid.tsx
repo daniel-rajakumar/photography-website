@@ -118,28 +118,7 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
                     {/* Dynamic Island */}
                     <div className={styles.dynamicIsland} />
 
-                    {/* Image Info Panel (revealed on hover/swipe up) */}
-                    <div className={styles.infoPanel} onClick={(e) => e.stopPropagation()}>
-                      <div className={styles.infoRow}>
-                        <h4 className={styles.infoTitle}>{photo.title}</h4>
-                        {captureDate && (
-                          <p className={styles.infoCaptureDate}>{captureDate}</p>
-                        )}
-                      </div>
-                      <div className={styles.infoRow}>
-                        <p className={styles.infoLocation}>
-                          {photo.location ? (
-                            <>
-                              <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor" style={{display:"inline-block",marginRight:4,verticalAlign:"middle"}}>
-                                <path d="M6 1C4.07 1 2.5 2.57 2.5 4.5C2.5 7 6 11 6 11C6 11 9.5 7 9.5 4.5C9.5 2.57 7.93 1 6 1ZM6 6C5.17 6 4.5 5.33 4.5 4.5C4.5 3.67 5.17 3 6 3C6.83 3 7.5 3.67 7.5 4.5C7.5 5.33 6.83 6 6 6Z"/>
-                              </svg>
-                              {photo.location.toUpperCase()}
-                            </>
-                          ) : "UNKNOWN LOCATION"}
-                        </p>
-                        <p className={styles.infoDevice}>SHOT ON {photo.phone.toUpperCase()}</p>
-                      </div>
-                    </div>
+
 
                     {/* Image Wallpaper */}
                     <div className={`${styles.wallpaperWrapper} ${photo.hasOriginal ? styles.beforeAfterWallpaperWrapper : ""}`}>
@@ -162,6 +141,28 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
                           sizes="(max-width: 768px) 100vw, 420px"
                         />
                       )}
+                    </div>
+
+                    {/* Image Info Panel (revealed on hover/swipe up) */}
+                    <div className={styles.infoWrapper}>
+                      <div className={styles.infoPanel} onClick={(e) => e.stopPropagation()}>
+                        <div className={styles.infoPanelInner}>
+                          <div className={styles.infoRow}>
+                            <h4 className={styles.infoTitle}>{photo.title}</h4>
+                            {captureDate && (
+                              <p className={styles.infoCaptureDate}>{captureDate}</p>
+                            )}
+                          </div>
+                          <div className={styles.infoRow}>
+                            <p className={styles.infoLocation}>
+                              {photo.location ? (
+                                <>{photo.location.toUpperCase()}</>
+                              ) : "UNKNOWN LOCATION"}
+                            </p>
+                            <p className={styles.infoDevice}>SHOT ON {photo.phone.toUpperCase()}</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
 
                     {/* Home Indicator bar */}

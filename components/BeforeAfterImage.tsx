@@ -28,11 +28,7 @@ export default function BeforeAfterImage({
   const containerRef = useRef<HTMLDivElement>(null);
   const hasDraggedRef = useRef(false);
   const clearDragTimeoutRef = useRef<number | null>(null);
-  const [sliderRoot, setSliderRoot] = useState<HTMLElement | null>(null);
-
   useEffect(() => {
-    setSliderRoot(containerRef.current?.closest("[data-phone-screen]") as HTMLElement | null);
-
     return () => {
       if (clearDragTimeoutRef.current !== null) {
         window.clearTimeout(clearDragTimeoutRef.current);
@@ -151,7 +147,7 @@ export default function BeforeAfterImage({
         <Image src={editedSrc} alt={alt} fill className={styles.image} sizes="(max-width: 768px) 100vw, 50vw" />
       </div>
 
-      {sliderRoot ? createPortal(sliderLine, sliderRoot) : sliderLine}
+      {sliderLine}
     </div>
   );
 }
