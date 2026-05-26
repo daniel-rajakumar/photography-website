@@ -23,6 +23,12 @@
   align-items: center;
   justify-content: center;
   transform-style: preserve-3d;
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.28s ease;
+  will-change: transform, opacity;
+}
+
+.stageDraggingDown {
+  transition: none;
 }
 
 /* Each card wrapper is centered; transforms handle position */
@@ -54,6 +60,7 @@
   background: rgba(4, 4, 4, 0.9);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
+  animation: filterOverlayFade 0.24s ease both;
 }
 
 .filterMenu {
@@ -65,6 +72,23 @@
   flex-direction: column;
   justify-content: center;
   overflow-y: auto;
+  animation: filterMenuSlideDown 0.34s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes filterOverlayFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes filterMenuSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-64px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .filterHeader {
