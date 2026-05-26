@@ -9,9 +9,17 @@ interface Props {
   editedSrc: string;
   originalSrc: string;
   alt: string;
+  isInfoOpen?: boolean;
+  isLandscape?: boolean;
 }
 
-export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props) {
+export default function BeforeAfterImage({
+  editedSrc,
+  originalSrc,
+  alt,
+  isInfoOpen = false,
+  isLandscape = false,
+}: Props) {
   const [sliderPos, setSliderPos] = useState<number>(100);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -122,7 +130,10 @@ export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props)
 
   return (
     <div 
-      className={styles.container} 
+      className={`${styles.container} ${isInfoOpen ? styles.infoOpen : ""}`}
+      style={{
+        "--before-after-info-shift": isLandscape ? "-50px" : "-54px",
+      } as React.CSSProperties}
       ref={containerRef}
       onClick={handleClick}
     >

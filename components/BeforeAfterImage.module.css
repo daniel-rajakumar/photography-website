@@ -8,6 +8,12 @@
 .image {
   object-fit: cover;
   pointer-events: none; /* Let container handle mouse events */
+  transform-origin: top center;
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.infoOpen .image {
+  transform: translateY(var(--before-after-info-shift));
 }
 
 .editedWrapper {
