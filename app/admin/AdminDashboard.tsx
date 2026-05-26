@@ -25,6 +25,14 @@ export default function AdminDashboard({ initialPhotos }: { initialPhotos: Local
     setTimeout(() => setMessage(null), 3000);
   };
 
+  const formatForDatetimeLocal = (isoString?: string) => {
+    if (!isoString) return "";
+    const date = new Date(isoString);
+    if (Number.isNaN(date.getTime())) return "";
+    const offsetMs = date.getTimezoneOffset() * 60000;
+    return new Date(date.getTime() - offsetMs).toISOString().slice(0, 16);
+  };
+
   const handleFieldChange = <K extends keyof LocalPhoto>(index: number, field: K, value: LocalPhoto[K]) => {
     const updated = [...photos];
     updated[index] = {
@@ -101,7 +109,7 @@ export default function AdminDashboard({ initialPhotos }: { initialPhotos: Local
                 <label>Capture Date (Read Only)</label>
                 <input 
                   type="datetime-local" 
-                  value={photo.date ? new Date(photo.date).toISOString().slice(0, 16) : ""} 
+                  value={formatForDatetimeLocal(photo.date)} 
                   readOnly
                   disabled
                   className={styles.readonly}
