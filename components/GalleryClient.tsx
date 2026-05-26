@@ -20,14 +20,14 @@ export default function GalleryClient({
     const visiblePhotos = photos.filter((p) => !p.hidden);
     const phones = Array.from(new Set(visiblePhotos.map((p) => p.phone).filter(Boolean)));
     phones.sort();
-    return ["all", ...phones];
+    return phones;
   }, [photos]);
 
   const orientationCategories = useMemo(() => {
     const visiblePhotos = photos.filter((p) => !p.hidden);
     const orientations = Array.from(new Set(visiblePhotos.map((p) => p.category).filter(Boolean)));
     orientations.sort();
-    return ["all", ...orientations];
+    return orientations;
   }, [photos]);
 
   const filteredPhotos = useMemo(() => {
@@ -99,6 +99,7 @@ export default function GalleryClient({
               counts={counts}
               allLabel="All Phones"
             />
+            <div className={styles.filterDivider} />
             <CategoryFilter
               active={activeOrientation}
               onChange={setActiveOrientation}
