@@ -208,6 +208,10 @@
   transform: translateY(-68px);
 }
 
+.phoneScreen.showInfo .beforeAfterWallpaperWrapper {
+  transform: none;
+}
+
 .phoneScreen.showInfo .wallpaper {
   transform: scale(1.05);
 }
@@ -632,6 +636,10 @@
 
 .landscape .phoneScreen.showInfo .wallpaperWrapper {
   transform: translateY(-53px);
+}
+
+.landscape .phoneScreen.showInfo .beforeAfterWallpaperWrapper {
+  transform: none;
 }
 
 .landscape .infoTitle {

@@ -142,7 +142,7 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
                     </div>
 
                     {/* Image Wallpaper */}
-                    <div className={styles.wallpaperWrapper}>
+                    <div className={`${styles.wallpaperWrapper} ${photo.hasOriginal ? styles.beforeAfterWallpaperWrapper : ""}`}>
                       {photo.hasOriginal ? (
                         <BeforeAfterImage 
                           editedSrc={imageUrl} 
