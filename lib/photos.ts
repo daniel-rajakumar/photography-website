@@ -10,7 +10,7 @@ export interface LocalPhoto {
   imagePath?: string;
   originalPath?: string;
   title: string;
-  category: "landscape" | "portrait" | "abstract" | "architecture" | "street" | string;
+  category: "landscape" | "portrait";
   date: string;
   phone: string;
   location: string;
@@ -88,6 +88,47 @@ function findSavedMetadata(savedMetadata: LocalPhoto[], identity: string, imageP
     meta.imagePath === imagePath ||
     meta.filename === path.basename(imagePath ?? "")
   );
+}
+
+function getMetadataNumber(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string") {
+    const parsed = Number.parseFloat(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  return null;
+}
+
+function getOrientationFromDimensions(width: unknown, height: unknown): LocalPhoto["category"] | null {
+  const imageWidth = getMetadataNumber(width);
+  const imageHeight = getMetadataNumber(height);
+
+  if (!imageWidth || !imageHeight) return null;
+
+  return imageWidth >= imageHeight ? "landscape" : "portrait";
+}
+
+async function getImageMetadata(filePath: string): Promise<{
+  phone: string;
+  orientation: LocalPhoto["category"];
+}> {
+  const fallback = {
+    phone: "iPhone 15 Pro",
+    orientation: "landscape" as const,
+  };
+
+  try {
+    const metadata = await exiftool.read(filePath);
+
+    return {
+      phone: metadata.Model ? String(metadata.Model) : fallback.phone,
+      orientation: getOrientationFromDimensions(metadata.ImageWidth, metadata.ImageHeight) ?? fallback.orientation,
+    };
+  } catch (error) {
+    console.error(`Failed to read EXIF for ${filePath}:`, error);
+    return fallback;
+  }
 }
 
 // Helper to get true file date (macOS mdls fallback to fs.stat)
@@ -170,12 +211,16 @@ export async function getLocalPhotos(): Promise<LocalPhoto[]> {
 
   const allPhotos: LocalPhoto[] = await Promise.all(files.map(async (photoFile) => {
     const existingMeta = findSavedMetadata(savedMetadata, photoFile.identity, photoFile.imagePath);
+    const imageMetadata = await getImageMetadata(photoFile.filePath);
+
     if (existingMeta) {
       return {
         ...existingMeta,
         filename: photoFile.identity,
         imagePath: photoFile.imagePath,
         originalPath: photoFile.originalPath,
+        category: imageMetadata.orientation,
+        phone: imageMetadata.phone,
         hasOriginal: !!photoFile.originalPath,
       };
     }
@@ -183,24 +228,14 @@ export async function getLocalPhotos(): Promise<LocalPhoto[]> {
     // Generate defaults for new files
     const formattedTitle = titleFromStructuredName(path.basename(photoFile.identity, path.extname(photoFile.identity)));
 
-    let phoneModel = "iPhone 15 Pro"; // Fallback
-    try {
-      const metadata = await exiftool.read(photoFile.filePath);
-      if (metadata.Model) {
-        phoneModel = String(metadata.Model);
-      }
-    } catch (e) {
-      console.error(`Failed to read EXIF for ${photoFile.imagePath}:`, e);
-    }
-
     return {
       filename: photoFile.identity,
       imagePath: photoFile.imagePath,
       originalPath: photoFile.originalPath,
       title: formattedTitle,
-      category: "landscape",
+      category: imageMetadata.orientation,
       date: getFileDate(photoFile.filePath),
-      phone: phoneModel,
+      phone: imageMetadata.phone,
       location: "",
       alt: formattedTitle,
       featured: false,

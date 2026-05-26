@@ -1,5 +1,20 @@
 [
   {
+    "filename": "new",
+    "imagePath": "/photos/new",
+    "title": "Outside A-Wing",
+    "category": "portrait",
+    "date": "2026-04-15T15:15:13.000Z",
+    "phone": "iPhone 17 Pro",
+    "location": "Rampo College, NJ",
+    "alt": "New",
+    "featured": false,
+    "order": 999,
+    "uploadTime": "2026-05-26T02:23:05.946Z",
+    "hasOriginal": false,
+    "uploadIndex": 4
+  },
+  {
     "filename": "003 - 2026-04-19 - Hack Princeton S26",
     "imagePath": "/photos/003 - 2026-04-19 - Hack Princeton S26/edited.jpg",
     "originalPath": "/photos/003 - 2026-04-19 - Hack Princeton S26/raw.jpg",
