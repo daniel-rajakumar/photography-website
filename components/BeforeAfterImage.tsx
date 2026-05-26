@@ -92,10 +92,20 @@ export default function BeforeAfterImage({
       }, 250);
     }
     
-    if (sliderPos < 50) {
-      setSliderPos(0);
+    if (startPos > 50) {
+      // Started closed (at bottom). Swiping up to open.
+      if (sliderPos < 95) {
+        setSliderPos(0);
+      } else {
+        setSliderPos(100);
+      }
     } else {
-      setSliderPos(100);
+      // Started open (at top). Swiping down to close.
+      if (sliderPos > 5) {
+        setSliderPos(100);
+      } else {
+        setSliderPos(0);
+      }
     }
   };
 
@@ -112,7 +122,7 @@ export default function BeforeAfterImage({
       className={styles.sliderLine}
       style={{
         top: `max(${isLandscape ? 22 : 55}px, ${sliderPos}%)`,
-        transition: isDragging ? "none" : "top 0.4s cubic-bezier(0.32, 0.72, 0, 1)",
+        transition: isDragging ? "none" : "top 1s cubic-bezier(0.32, 0.72, 0, 1)",
       }}
       onClick={handleClick}
       onPointerDown={handlePointerDown}
@@ -141,7 +151,7 @@ export default function BeforeAfterImage({
         className={styles.editedWrapper}
         style={{
           clipPath: `polygon(0 0, 100% 0, 100% ${sliderPos}%, 0 ${sliderPos}%)`,
-          transition: isDragging ? "none" : "clip-path 0.4s cubic-bezier(0.32, 0.72, 0, 1)"
+          transition: isDragging ? "none" : "clip-path 1s cubic-bezier(0.32, 0.72, 0, 1)"
         }}
       >
         <Image src={editedSrc} alt={alt} fill className={styles.image} sizes="(max-width: 768px) 100vw, 50vw" />
