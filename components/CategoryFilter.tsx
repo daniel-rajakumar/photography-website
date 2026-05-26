@@ -19,7 +19,10 @@ export default function CategoryFilter({
 }: CategoryFilterProps) {
   const getLabel = (cat: string) => {
     if (cat === "all") return allLabel;
-    return cat.charAt(0).toUpperCase() + cat.slice(1);
+    if (cat === "landscape" || cat === "portrait") {
+      return cat.charAt(0).toUpperCase() + cat.slice(1);
+    }
+    return cat;
   };
 
   return (
@@ -30,7 +33,7 @@ export default function CategoryFilter({
             key={cat}
             role="listitem"
             className={`${styles.pill} ${active === cat ? styles.pillActive : ""}`}
-            onClick={() => onChange(cat)}
+            onClick={() => onChange(active === cat ? "all" : cat)}
             aria-pressed={active === cat}
             aria-label={`Filter: ${getLabel(cat)}`}
             id={`filter-pill-${cat.replace(/\s+/g, "-").toLowerCase()}`}
