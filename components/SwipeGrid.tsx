@@ -57,6 +57,7 @@ export default function SwipeGrid({ photos, filters }: GalleryGridProps) {
     offsetX: 0,
     offsetY: 0,
     intent: null as "h" | "v" | null,
+    startedOnActivePhone: false,
   });
   const [dragOffset, setDragOffset] = useState(0); // only for re-render
   const [verticalDragOffset, setVerticalDragOffset] = useState(0);
@@ -94,6 +95,7 @@ export default function SwipeGrid({ photos, filters }: GalleryGridProps) {
     drag.current.offsetY = 0;
     drag.current.active = false;
     drag.current.intent = null;
+    drag.current.startedOnActivePhone = false;
     setDragOffset(0);
     setVerticalDragOffset(0);
   }, [photos.length]);
@@ -116,6 +118,7 @@ export default function SwipeGrid({ photos, filters }: GalleryGridProps) {
     drag.current.offsetY = 0;
     drag.current.active = false;
     drag.current.intent = null;
+    drag.current.startedOnActivePhone = false;
     setDragOffset(0);
     setVerticalDragOffset(0);
   };
@@ -123,6 +126,7 @@ export default function SwipeGrid({ photos, filters }: GalleryGridProps) {
   // ── Pointer handlers ──────────────────────────────────────────────────────
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.pointerType === "mouse" && e.button !== 0) return;
+    const target = e.target as HTMLElement;
     drag.current = {
       active: true,
       startX: e.clientX,
@@ -130,6 +134,7 @@ export default function SwipeGrid({ photos, filters }: GalleryGridProps) {
       offsetX: 0,
       offsetY: 0,
       intent: null,
+      startedOnActivePhone: target.closest('[data-active-phone="true"]') !== null,
     };
     containerRef.current?.setPointerCapture(e.pointerId);
   };
@@ -149,7 +154,7 @@ export default function SwipeGrid({ photos, filters }: GalleryGridProps) {
     if (d.intent === "h") {
       d.offsetX = dx;
       setDragOffset(dx);
-    } else if (d.intent === "v") {
+    } else if (d.intent === "v" && d.startedOnActivePhone) {
       d.offsetY = dy;
       setVerticalDragOffset(Math.min(Math.max(dy, 0), 96));
     }
@@ -177,7 +182,7 @@ export default function SwipeGrid({ photos, filters }: GalleryGridProps) {
         // snap back in place
         resetDrag();
       }
-    } else if (wasVerticalDrag && dy > Math.max(72, width * 0.08)) {
+    } else if (wasVerticalDrag && d.startedOnActivePhone && dy > Math.max(72, width * 0.08)) {
       setFiltersOpen(true);
       resetDrag();
     } else {
@@ -195,16 +200,17 @@ export default function SwipeGrid({ photos, filters }: GalleryGridProps) {
     const absEff = Math.abs(effectiveOffset);
 
     const translateX    = effectiveOffset * 78;           // % of card width
+    const translateY    = offset === 0 ? verticalDragOffset : 0;
     const rotateY       = -effectiveOffset * 25;          // deg
     const scale         = Math.max(0.72, 1 - absEff * 0.11);
     const translateZ    = Math.min(0, -absEff * 60);      // px depth
-    const opacity       = Math.max(0, 1 - absEff * 0.45);
+    const opacity       = Math.max(0, 1 - absEff * 0.45) * (offset === 0 ? 1 - verticalDragOffset / 260 : 1);
     const zIndex        = Math.round(100 - Math.abs(offset) * 10);
-    const isSettled     = dragOffset === 0;
+    const isSettled     = dragOffset === 0 && verticalDragOffset === 0;
 
     return {
       position: "absolute",
-      transform: `translateX(${translateX}%) rotateY(${rotateY}deg) scale(${scale}) translateZ(${translateZ}px)`,
+      transform: `translateX(${translateX}%) translateY(${translateY}px) rotateY(${rotateY}deg) scale(${scale}) translateZ(${translateZ}px)`,
       opacity,
       zIndex,
       transition: isSettled
@@ -304,13 +310,7 @@ export default function SwipeGrid({ photos, filters }: GalleryGridProps) {
       )}
 
       {/* 3-D Stage */}
-      <div
-        className={`${styles.stage} ${verticalDragOffset > 0 ? styles.stageDraggingDown : ""}`}
-        style={{
-          transform: `translateY(${verticalDragOffset}px)`,
-          opacity: 1 - verticalDragOffset / 260,
-        }}
-      >
+      <div className={styles.stage}>
         {photos.map((photo, index) => {
           const offset = index - currentIndex;
           if (Math.abs(offset) > VISIBLE_RANGE + 1) return null;
@@ -337,6 +337,7 @@ export default function SwipeGrid({ photos, filters }: GalleryGridProps) {
                       aria-label={`Toggle info for photo: ${photo.title}`}
                       id={`gallery-photo-${photo.filename}`}
                       data-phone-screen
+                      data-active-phone={index === currentIndex ? "true" : "false"}
                     >
                       {/* Status Bar */}
                       <div className={styles.statusBar}>
