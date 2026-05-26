@@ -8,14 +8,34 @@ import styles from "@/app/page.module.css";
 
 function subscribeToViewportChanges(onStoreChange: () => void) {
   window.addEventListener("resize", onStoreChange);
-  return () => window.removeEventListener("resize", onStoreChange);
+  window.addEventListener("orientationchange", onStoreChange);
+
+  return () => {
+    window.removeEventListener("resize", onStoreChange);
+    window.removeEventListener("orientationchange", onStoreChange);
+  };
 }
 
 function getIsMobileSnapshot() {
-  return window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768;
+  return (
+    window.matchMedia("(pointer: coarse)").matches ||
+    window.matchMedia("(any-pointer: coarse)").matches ||
+    window.innerWidth <= 768 ||
+    Math.min(window.innerWidth, window.innerHeight) <= 480
+  );
 }
 
 function getIsMobileServerSnapshot() {
+  return null;
+}
+
+function getDeviceOrientationSnapshot() {
+  return window.matchMedia("(orientation: landscape)").matches
+    ? "landscape"
+    : "portrait";
+}
+
+function getDeviceOrientationServerSnapshot() {
   return null;
 }
 
@@ -33,6 +53,13 @@ export default function GalleryClient({
     getIsMobileSnapshot,
     getIsMobileServerSnapshot
   );
+  const deviceOrientation = useSyncExternalStore(
+    subscribeToViewportChanges,
+    getDeviceOrientationSnapshot,
+    getDeviceOrientationServerSnapshot
+  );
+  const effectiveOrientation =
+    isMobile === true ? deviceOrientation : activeOrientation;
 
   const phoneCategories = useMemo(() => {
     const visiblePhotos = photos.filter((p) => !p.hidden);
@@ -53,8 +80,8 @@ export default function GalleryClient({
     if (activePhone !== "all") {
       result = result.filter((p) => p.phone === activePhone);
     }
-    if (activeOrientation !== "all") {
-      result = result.filter((p) => p.category === activeOrientation);
+    if (effectiveOrientation && effectiveOrientation !== "all") {
+      result = result.filter((p) => p.category === effectiveOrientation);
     }
     
     // Sort logic: featured photos first, then preserve the original order (which is by uploadIndex/order from server)
@@ -70,7 +97,7 @@ export default function GalleryClient({
       // 3. Fallback to uploadIndex (descending) as it was originally
       return (b.uploadIndex || 0) - (a.uploadIndex || 0);
     });
-  }, [activePhone, activeOrientation, photos]);
+  }, [activePhone, effectiveOrientation, photos]);
 
   const counts = useMemo(() => {
     const visiblePhotos = photos.filter((p) => !p.hidden);
@@ -140,14 +167,18 @@ export default function GalleryClient({
               counts={counts}
               allLabel="All Phones"
             />
-            <div className={styles.filterDivider} />
-            <CategoryFilter
-              active={activeOrientation}
-              onChange={setActiveOrientation}
-              categories={orientationCategories}
-              counts={orientationCounts}
-              allLabel="All Orientations"
-            />
+            {isMobile !== true && (
+              <>
+                <div className={styles.filterDivider} />
+                <CategoryFilter
+                  active={activeOrientation}
+                  onChange={setActiveOrientation}
+                  categories={orientationCategories}
+                  counts={orientationCounts}
+                  allLabel="All Orientations"
+                />
+              </>
+            )}
           </div>
         </div>
 
