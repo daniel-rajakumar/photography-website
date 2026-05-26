@@ -113,11 +113,10 @@ function getOrientationFromDimensions(width: unknown, height: unknown): LocalPho
 }
 
 async function getImageMetadata(filePath: string, phoneMetadataPath = filePath): Promise<{
-  phone: string;
+  phone: string | null;
   orientation: LocalPhoto["category"] | null;
 }> {
   const fallback = {
-    phone: "iPhone 15 Pro",
     orientation: null,
   };
 
@@ -130,11 +129,11 @@ async function getImageMetadata(filePath: string, phoneMetadataPath = filePath):
     console.error(`Failed to read dimensions for ${filePath}:`, error);
   }
 
-  let phone = fallback.phone;
+  let phone: string | null = null;
 
   try {
     const phoneMetadata = await exiftool.read(phoneMetadataPath);
-    phone = phoneMetadata.Model ? String(phoneMetadata.Model) : fallback.phone;
+    phone = phoneMetadata.Model ? String(phoneMetadata.Model) : null;
   } catch (error) {
     console.error(`Failed to read phone EXIF for ${phoneMetadataPath}:`, error);
   }
@@ -142,7 +141,7 @@ async function getImageMetadata(filePath: string, phoneMetadataPath = filePath):
   try {
     const metadata = await exiftool.read(filePath);
     return {
-      phone: phone === fallback.phone && metadata.Model ? String(metadata.Model) : phone,
+      phone: phone ?? (metadata.Model ? String(metadata.Model) : null),
       orientation:
         orientation ??
         getOrientationFromDimensions(metadata.ImageWidth, metadata.ImageHeight) ??
@@ -248,7 +247,7 @@ export async function getLocalPhotos(): Promise<LocalPhoto[]> {
         imagePath: photoFile.imagePath,
         originalPath: photoFile.originalPath,
         category: imageMetadata.orientation ?? existingMeta.category,
-        phone: imageMetadata.phone,
+        phone: imageMetadata.phone ?? existingMeta.phone,
         hasOriginal: !!photoFile.originalPath,
       };
     }
@@ -263,7 +262,7 @@ export async function getLocalPhotos(): Promise<LocalPhoto[]> {
       title: formattedTitle,
       category: imageMetadata.orientation ?? "portrait",
       date: getFileDate(photoFile.filePath),
-      phone: imageMetadata.phone,
+      phone: imageMetadata.phone ?? "",
       location: "",
       alt: formattedTitle,
       featured: false,
