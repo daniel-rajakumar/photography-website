@@ -16,19 +16,37 @@ export default function GalleryClient({
   const [activePhone, setActivePhone] = useState<string>("all");
 
   const phoneCategories = useMemo(() => {
-    const phones = Array.from(new Set(photos.map((p) => p.phone).filter(Boolean)));
+    const visiblePhotos = photos.filter((p) => !p.hidden);
+    const phones = Array.from(new Set(visiblePhotos.map((p) => p.phone).filter(Boolean)));
     phones.sort();
     return ["all", ...phones];
   }, [photos]);
 
   const filteredPhotos = useMemo(() => {
-    if (activePhone === "all") return photos;
-    return photos.filter((p) => p.phone === activePhone);
+    let result = photos.filter((p) => !p.hidden);
+    if (activePhone !== "all") {
+      result = result.filter((p) => p.phone === activePhone);
+    }
+    
+    // Sort logic: featured photos first, then preserve the original order (which is by uploadIndex/order from server)
+    // We use a stable sort approach
+    return [...result].sort((a, b) => {
+      // 1. Featured items come first
+      if (a.featured && !b.featured) return -1;
+      if (!a.featured && b.featured) return 1;
+      
+      // 2. Order field (lower numbers come first)
+      if (a.order !== b.order) return (a.order || 999) - (b.order || 999);
+      
+      // 3. Fallback to uploadIndex (descending) as it was originally
+      return (b.uploadIndex || 0) - (a.uploadIndex || 0);
+    });
   }, [activePhone, photos]);
 
   const counts = useMemo(() => {
-    const cnts: Record<string, number> = { all: photos.length };
-    photos.forEach((p) => {
+    const visiblePhotos = photos.filter((p) => !p.hidden);
+    const cnts: Record<string, number> = { all: visiblePhotos.length };
+    visiblePhotos.forEach((p) => {
       if (p.phone) {
          cnts[p.phone] = (cnts[p.phone] ?? 0) + 1;
       }
