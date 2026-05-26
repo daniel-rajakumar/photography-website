@@ -1,18 +1,28 @@
 .grid {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 6rem;
+  gap: 2rem;
   padding: 3rem 1rem 8rem;
   width: 100%;
-  max-width: 1000px;
   margin: 0 auto;
   background: transparent;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.grid::-webkit-scrollbar {
+  display: none;
 }
 
 .card {
   position: relative;
-  width: 100%;
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
   animation: scaleFadeIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
   will-change: transform, opacity;
 }

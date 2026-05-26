@@ -125,6 +125,14 @@ export default function GalleryClient({
 
 
 
+  const buildSwipeUrl = () => {
+    const params = new URLSearchParams();
+    if (activePhone !== "all") params.set("phone", activePhone);
+    if (activeOrientation !== "all") params.set("orientation", activeOrientation);
+    const qs = params.toString();
+    return `/swipe${qs ? `?${qs}` : ""}`;
+  };
+
   return (
     <div className={styles.page}>
       {/* Page Header */}
@@ -161,13 +169,11 @@ export default function GalleryClient({
           </div>
         )}
 
-        {filteredPhotos.length > 0 ? (
-          <GalleryGrid photos={filteredPhotos} />
-        ) : (
-          <div className={styles.empty}>
-            <p>No photos in this category yet.</p>
-          </div>
-        )}
+        <div className="container" style={{ display: 'flex', justifyContent: 'center', marginBottom: '3rem' }}>
+          <a href={buildSwipeUrl()} className={styles.homeCta} style={{ textDecoration: 'none' }}>
+            View Photos in Fullscreen
+          </a>
+        </div>
       </section>
     </div>
   );
