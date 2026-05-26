@@ -124,6 +124,19 @@ export default function HomeClient({ photos, content, heroSrc }: Props) {
             View Photos
           </a>
 
+          <div className={styles.homeContactLinks} aria-label="Contact links">
+            <a
+              href="https://www.instagram.com/dan.photography.page?igsh=bmxtNmdjOHU0MzIz&utm_source=qr"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Instagram
+            </a>
+            <a href="mailto:contact@danielrajakumar.com">
+              contact@danielrajakumar.com
+            </a>
+          </div>
+
           {content.instructionText && (
             <div style={{ marginTop: "2rem" }}>
               <InstructionText text={content.instructionText} />
