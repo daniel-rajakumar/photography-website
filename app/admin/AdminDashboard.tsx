@@ -87,15 +87,14 @@ export default function AdminDashboard({ initialPhotos }: { initialPhotos: Local
               </div>
               <div className={styles.row}>
                 <div className={styles.field}>
-                  <label>Category</label>
-                  <select 
-                    value={photo.category} 
-                    onChange={(e) => handleFieldChange(i, "category", e.target.value)}
-                    disabled={saving}
-                  >
-                    <option value="landscape">Landscape</option>
-                    <option value="portrait">Portrait</option>
-                  </select>
+                  <label>Orientation (Read Only)</label>
+                  <input
+                    type="text"
+                    value={photo.category === "portrait" ? "Portrait" : "Landscape"}
+                    readOnly
+                    disabled
+                    className={styles.readonly}
+                  />
                 </div>
                 <div className={styles.field}>
                   <label>Order</label>
@@ -108,18 +107,13 @@ export default function AdminDashboard({ initialPhotos }: { initialPhotos: Local
                 </div>
               </div>
               <div className={styles.field}>
-                <label>Capture Date</label>
+                <label>Capture Date (Read Only)</label>
                 <input 
                   type="datetime-local" 
                   value={photo.date ? new Date(photo.date).toISOString().slice(0, 16) : ""} 
-                  onChange={(e) => {
-                    // Convert local datetime back to ISO string
-                    const d = new Date(e.target.value);
-                    if (!isNaN(d.getTime())) {
-                      handleFieldChange(i, "date", d.toISOString());
-                    }
-                  }} 
-                  disabled={saving}
+                  readOnly
+                  disabled
+                  className={styles.readonly}
                 />
               </div>
               <div className={styles.field}>
