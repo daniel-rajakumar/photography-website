@@ -93,6 +93,7 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
                     onClick={() => setActivePhotoInfoId(activePhotoInfoId === photo.filename ? null : photo.filename)}
                     aria-label={`Toggle info for photo: ${photo.title}`}
                     id={`gallery-photo-${photo.filename}`}
+                    data-phone-screen
                   >
                     {/* Status Bar */}
                     <div className={styles.statusBar}>

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import styles from "./BeforeAfterImage.module.css";
 
@@ -19,6 +20,17 @@ export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props)
   const containerRef = useRef<HTMLDivElement>(null);
   const hasDraggedRef = useRef(false);
   const clearDragTimeoutRef = useRef<number | null>(null);
+  const [sliderRoot, setSliderRoot] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setSliderRoot(containerRef.current?.closest("[data-phone-screen]") as HTMLElement | null);
+
+    return () => {
+      if (clearDragTimeoutRef.current !== null) {
+        window.clearTimeout(clearDragTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const updatePos = (clientX: number, clientY: number) => {
     if (!containerRef.current) return;
@@ -91,6 +103,23 @@ export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props)
     }
   };
 
+  const sliderLine = (
+    <div
+      className={styles.sliderLine}
+      style={{
+        top: `max(22px, ${sliderPos}%)`,
+        transition: isDragging ? "none" : "top 0.4s cubic-bezier(0.32, 0.72, 0, 1)",
+      }}
+      onClick={handleClick}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
+    >
+      <div className={styles.sliderHandle} />
+    </div>
+  );
+
   return (
     <div 
       className={styles.container} 
@@ -111,23 +140,7 @@ export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props)
         <Image src={editedSrc} alt={alt} fill className={styles.image} sizes="(max-width: 768px) 100vw, 50vw" />
       </div>
 
-      {/* Slider Line (Acts as Home Indicator) */}
-      <div 
-        className={styles.sliderLine} 
-        data-before-after-slider-line
-        style={{ 
-          top: `max(22px, ${sliderPos}%)`,
-          transition: isDragging
-            ? "none"
-            : "top 0.4s cubic-bezier(0.32, 0.72, 0, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)"
-        }}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
-      >
-        <div className={styles.sliderHandle} />
-      </div>
+      {sliderRoot ? createPortal(sliderLine, sliderRoot) : sliderLine}
     </div>
   );
 }

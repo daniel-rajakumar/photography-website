@@ -208,10 +208,6 @@
   transform: translateY(-68px);
 }
 
-.phoneScreen.showInfo .wallpaperWrapper [data-before-after-slider-line] {
-  transform: translateY(calc(-50% - 10px + 68px));
-}
-
 .phoneScreen.showInfo .wallpaper {
   transform: scale(1.05);
 }
@@ -636,10 +632,6 @@
 
 .landscape .phoneScreen.showInfo .wallpaperWrapper {
   transform: translateY(-53px);
-}
-
-.landscape .phoneScreen.showInfo .wallpaperWrapper [data-before-after-slider-line] {
-  transform: translateY(calc(-50% - 10px + 53px));
 }
 
 .landscape .infoTitle {
