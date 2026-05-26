@@ -59,6 +59,7 @@ export default function SwipeGrid({ photos, filters }: GalleryGridProps) {
     intent: null as "h" | "v" | null,
   });
   const [dragOffset, setDragOffset] = useState(0); // only for re-render
+  const [verticalDragOffset, setVerticalDragOffset] = useState(0);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(390);
@@ -94,6 +95,7 @@ export default function SwipeGrid({ photos, filters }: GalleryGridProps) {
     drag.current.active = false;
     drag.current.intent = null;
     setDragOffset(0);
+    setVerticalDragOffset(0);
   }, [photos.length]);
 
   const getFilterHref = (next: { phone?: string; orientation?: string }) => {
@@ -109,6 +111,14 @@ export default function SwipeGrid({ photos, filters }: GalleryGridProps) {
   };
 
   const closeFilters = () => setFiltersOpen(false);
+  const resetDrag = () => {
+    drag.current.offsetX = 0;
+    drag.current.offsetY = 0;
+    drag.current.active = false;
+    drag.current.intent = null;
+    setDragOffset(0);
+    setVerticalDragOffset(0);
+  };
 
   // ── Pointer handlers ──────────────────────────────────────────────────────
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -141,6 +151,7 @@ export default function SwipeGrid({ photos, filters }: GalleryGridProps) {
       setDragOffset(dx);
     } else if (d.intent === "v") {
       d.offsetY = dy;
+      setVerticalDragOffset(Math.min(Math.max(dy, 0), 96));
     }
   };
 
@@ -164,20 +175,13 @@ export default function SwipeGrid({ photos, filters }: GalleryGridProps) {
         router.push("/");
       } else {
         // snap back in place
-        drag.current.offsetX = 0;
-        drag.current.offsetY = 0;
-        drag.current.active = false;
-        drag.current.intent = null;
-        setDragOffset(0);
+        resetDrag();
       }
     } else if (wasVerticalDrag && dy > Math.max(72, width * 0.08)) {
       setFiltersOpen(true);
-      drag.current.active = false;
-      drag.current.intent = null;
-      drag.current.offsetY = 0;
+      resetDrag();
     } else {
-      drag.current.active = false;
-      drag.current.intent = null;
+      resetDrag();
     }
   };
 
@@ -300,7 +304,13 @@ export default function SwipeGrid({ photos, filters }: GalleryGridProps) {
       )}
 
       {/* 3-D Stage */}
-      <div className={styles.stage}>
+      <div
+        className={`${styles.stage} ${verticalDragOffset > 0 ? styles.stageDraggingDown : ""}`}
+        style={{
+          transform: `translateY(${verticalDragOffset}px)`,
+          opacity: 1 - verticalDragOffset / 260,
+        }}
+      >
         {photos.map((photo, index) => {
           const offset = index - currentIndex;
           if (Math.abs(offset) > VISIBLE_RANGE + 1) return null;
