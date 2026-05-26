@@ -132,7 +132,7 @@ export default function BeforeAfterImage({
     <div 
       className={`${styles.container} ${isInfoOpen ? styles.infoOpen : ""}`}
       style={{
-        "--before-after-info-shift": isLandscape ? "-50px" : "-54px",
+        "--before-after-info-shift": isLandscape ? "-50px" : "-62px",
       } as React.CSSProperties}
       ref={containerRef}
       onClick={handleClick}

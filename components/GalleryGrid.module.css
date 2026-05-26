@@ -205,7 +205,7 @@
 }
 
 .phoneScreen.showInfo .wallpaperWrapper {
-  transform: translateY(-68px);
+  transform: translateY(-80px);
 }
 
 .phoneScreen.showInfo .beforeAfterWallpaperWrapper {

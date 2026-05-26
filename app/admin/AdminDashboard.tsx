@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { type LocalPhoto, savePhotoMetadata } from "@/lib/photos";
 import styles from "./Admin.module.css";
@@ -10,8 +10,6 @@ export default function AdminDashboard({ initialPhotos }: { initialPhotos: Local
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ text: string, type: "success" | "error" } | null>(null);
   
-  const debouncedSaveRef = useRef<NodeJS.Timeout | null>(null);
-
   const performSave = async (dataToSave: LocalPhoto[]) => {
     setSaving(true);
     setMessage(null);
@@ -34,11 +32,6 @@ export default function AdminDashboard({ initialPhotos }: { initialPhotos: Local
       [field]: value,
     };
     setPhotos(updated);
-
-    if (debouncedSaveRef.current) clearTimeout(debouncedSaveRef.current);
-    debouncedSaveRef.current = setTimeout(() => {
-      performSave(updated);
-    }, 1500);
   };
 
   return (
@@ -53,14 +46,12 @@ export default function AdminDashboard({ initialPhotos }: { initialPhotos: Local
         </button>
         <div className={styles.saveStatus}>
           {saving ? (
-            <span className={styles.savingBadge}>Auto-saving...</span>
+            <span className={styles.savingBadge}>Saving...</span>
           ) : message ? (
             <span className={`${styles.message} ${styles[message.type]}`}>
               {message.text}
             </span>
-          ) : (
-            <span className={styles.autoSaveText}>Changes save automatically</span>
-          )}
+          ) : null}
         </div>
       </div>
 
@@ -136,15 +127,27 @@ export default function AdminDashboard({ initialPhotos }: { initialPhotos: Local
                   className={styles.readonly}
                 />
               </div>
-              <div className={styles.checkboxField}>
-                <input 
-                  type="checkbox" 
-                  id={`featured-${i}`}
-                  checked={photo.featured || false} 
-                  onChange={(e) => handleFieldChange(i, "featured", e.target.checked)} 
-                  disabled={saving}
-                />
-                <label htmlFor={`featured-${i}`}>Featured</label>
+              <div className={styles.row}>
+                <div className={styles.checkboxField}>
+                  <input 
+                    type="checkbox" 
+                    id={`featured-${i}`}
+                    checked={photo.featured || false} 
+                    onChange={(e) => handleFieldChange(i, "featured", e.target.checked)} 
+                    disabled={saving}
+                  />
+                  <label htmlFor={`featured-${i}`}>Featured</label>
+                </div>
+                <div className={styles.checkboxField}>
+                  <input 
+                    type="checkbox" 
+                    id={`hidden-${i}`}
+                    checked={photo.hidden || false} 
+                    onChange={(e) => handleFieldChange(i, "hidden", e.target.checked)} 
+                    disabled={saving}
+                  />
+                  <label htmlFor={`hidden-${i}`}>Hide</label>
+                </div>
               </div>
             </div>
             <div className={styles.indexBadge}>

@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
 import { exiftool } from "exiftool-vendored";
+import { revalidatePath } from "next/cache";
 
 export interface LocalPhoto {
   filename: string;
@@ -20,6 +21,7 @@ export interface LocalPhoto {
   uploadIndex?: number;
   uploadTime?: string;
   hasOriginal?: boolean;
+  hidden?: boolean;
 }
 
 const PHOTOS_DIR = path.join(process.cwd(), "public", "photos");
@@ -239,6 +241,7 @@ export async function getLocalPhotos(): Promise<LocalPhoto[]> {
       location: "",
       alt: formattedTitle,
       featured: false,
+      hidden: false,
       order: 999,
       uploadTime: new Date().toISOString(),
       hasOriginal: !!photoFile.originalPath,
@@ -375,6 +378,7 @@ export async function savePhotoMetadata(updatedPhotos: LocalPhoto[]): Promise<Lo
     }
 
     fs.writeFileSync(DATA_FILE, JSON.stringify(finalPhotos, null, 2), "utf-8");
+    revalidatePath("/");
     return finalPhotos;
   } catch (error) {
     console.error("Failed to save photo metadata:", error);
