@@ -1,4 +1,5 @@
 import { getLocalPhotos } from "@/lib/photos";
+import EmptySwipeState from "@/components/EmptySwipeState";
 import SwipeGrid from "@/components/SwipeGrid";
 
 export const revalidate = 60;
@@ -46,9 +47,14 @@ export default async function SwipePage(props: { searchParams: Promise<{ [key: s
             }}
           />
         ) : (
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", color: "var(--color-text-secondary)" }}>
-            <p>No photos match these filters.</p>
-          </div>
+          <EmptySwipeState
+            filters={{
+              activePhone: phone ?? "all",
+              activeOrientation: orientation ?? "all",
+              phones,
+              orientations,
+            }}
+          />
         )}
       </div>
     </>

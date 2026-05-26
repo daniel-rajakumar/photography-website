@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import RotateLock from "@/components/RotateLock";
+import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -12,6 +13,23 @@ export const metadata: Metadata = {
     "A personal gallery of phone photos edited in Lightroom, with original comparisons from Daniel Rajakumar.",
   alternates: {
     canonical: "/",
+  },
+  manifest: "/manifest.webmanifest",
+  applicationName: "Dan Photos",
+  appleWebApp: {
+    capable: true,
+    title: "Dan Photos",
+    statusBarStyle: "black-translucent",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  icons: {
+    icon: [
+      { url: "/icon-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512x512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
   openGraph: {
     title: "Daniel Rajakumar | Phone Photography",
@@ -39,6 +57,11 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: "#080808",
+  colorScheme: "dark",
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -47,6 +70,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <ServiceWorkerRegistration />
         <RotateLock>
           <main>{children}</main>
         </RotateLock>
