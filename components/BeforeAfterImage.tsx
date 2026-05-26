@@ -114,9 +114,12 @@ export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props)
       {/* Slider Line (Acts as Home Indicator) */}
       <div 
         className={styles.sliderLine} 
+        data-before-after-slider-line
         style={{ 
           top: `max(22px, ${sliderPos}%)`,
-          transition: isDragging ? "none" : "top 0.4s cubic-bezier(0.32, 0.72, 0, 1)"
+          transition: isDragging
+            ? "none"
+            : "top 0.4s cubic-bezier(0.32, 0.72, 0, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)"
         }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
