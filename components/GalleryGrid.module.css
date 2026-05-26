@@ -545,7 +545,13 @@
   }
 
   .phoneContainer.landscape {
-    max-width: min(760px, calc(100vw - 5rem), calc((100dvh - 7rem) * 1.92));
+    max-width: min(760px, calc(100vw - 5rem), calc((100vh - 7rem) * 1.92));
+  }
+
+  @supports (height: 100svh) {
+    .phoneContainer.landscape {
+      max-width: min(760px, calc(100vw - 5rem), calc((100svh - 7rem) * 1.92));
+    }
   }
 }
 
