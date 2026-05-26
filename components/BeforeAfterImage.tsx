@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import Image from "next/image";
 import styles from "./BeforeAfterImage.module.css";
 
@@ -11,6 +10,7 @@ interface Props {
   alt: string;
   isInfoOpen?: boolean;
   isLandscape?: boolean;
+  eager?: boolean;
 }
 
 export default function BeforeAfterImage({
@@ -19,6 +19,7 @@ export default function BeforeAfterImage({
   alt,
   isInfoOpen = false,
   isLandscape = false,
+  eager = false,
 }: Props) {
   const [sliderPos, setSliderPos] = useState<number>(100);
   const [isDragging, setIsDragging] = useState(false);
@@ -144,7 +145,15 @@ export default function BeforeAfterImage({
       onClick={handleClick}
     >
       {/* Bottom layer: Unedited (Original) */}
-      <Image src={originalSrc} alt={`Unedited ${alt}`} fill className={styles.image} sizes="(max-width: 768px) 100vw, 50vw" />
+      <Image
+        src={originalSrc}
+        alt={`Unedited ${alt}`}
+        fill
+        className={styles.image}
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 960px"
+        loading={eager ? "eager" : "lazy"}
+        fetchPriority={eager ? "high" : "auto"}
+      />
       <div className={styles.uneditedLabel}>ORIGINAL</div>
       
       {/* Top layer: Edited */}
@@ -155,7 +164,15 @@ export default function BeforeAfterImage({
           transition: isDragging ? "none" : "clip-path 1s cubic-bezier(0.32, 0.72, 0, 1)"
         }}
       >
-        <Image src={editedSrc} alt={alt} fill className={styles.image} sizes="(max-width: 768px) 100vw, 50vw" />
+        <Image
+          src={editedSrc}
+          alt={alt}
+          fill
+          className={styles.image}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 960px"
+          loading={eager ? "eager" : "lazy"}
+          fetchPriority={eager ? "high" : "auto"}
+        />
       </div>
 
       {sliderLine}

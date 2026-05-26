@@ -39,9 +39,9 @@ export default function Navbar() {
   return (
     <header className={`${styles.header} ${scrolled ? styles.scrolled : ""}`}>
       <nav className={styles.nav} aria-label="Main navigation">
-        <Link href="/" className={styles.logo} aria-label="Lumina Photography Home">
-          <span className={styles.logoMark}>L</span>
-          <span className={styles.logoText}>UMINA</span>
+        <Link href="/" className={styles.logo} aria-label="Daniel Rajakumar Photography Home">
+          <span className={styles.logoMark}>D</span>
+          <span className={styles.logoText}>ANIEL</span>
         </Link>
 
         {/* Desktop links */}

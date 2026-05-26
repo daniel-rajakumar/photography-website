@@ -29,18 +29,19 @@ export default function CategoryFilter({
     <nav className={styles.filterNav} aria-label="Filter photos by phone model">
       <div className={styles.track} role="list">
         {categories.map((cat) => (
-          <button
-            key={cat}
-            role="listitem"
-            className={`${styles.pill} ${active === cat ? styles.pillActive : ""}`}
-            onClick={() => onChange(active === cat ? "all" : cat)}
-            aria-pressed={active === cat}
-            aria-label={`Filter: ${getLabel(cat)}`}
-            id={`filter-pill-${cat.replace(/\s+/g, "-").toLowerCase()}`}
-          >
-            <span>{getLabel(cat)}</span>
-            <span className={styles.count}>{counts[cat] ?? 0}</span>
-          </button>
+          <div key={cat} role="listitem">
+            <button
+              type="button"
+              className={`${styles.pill} ${active === cat ? styles.pillActive : ""}`}
+              onClick={() => onChange(active === cat ? "all" : cat)}
+              aria-pressed={active === cat}
+              aria-label={`Filter: ${getLabel(cat)}`}
+              id={`filter-pill-${cat.replace(/\s+/g, "-").toLowerCase()}`}
+            >
+              <span>{getLabel(cat)}</span>
+              <span className={styles.count}>{counts[cat] ?? 0}</span>
+            </button>
+          </div>
         ))}
       </div>
     </nav>
