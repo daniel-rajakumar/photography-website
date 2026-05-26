@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import type { LocalPhoto } from "@/lib/photos";
 import GalleryGrid from "@/components/GalleryGrid";
 import CategoryFilter from "@/components/CategoryFilter";
@@ -15,6 +15,16 @@ export default function GalleryClient({
 }) {
   const [activePhone, setActivePhone] = useState<string>("all");
   const [activeOrientation, setActiveOrientation] = useState<string>("all");
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const checkMobile = () => window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768;
+    setIsMobile(checkMobile());
+    
+    const handleResize = () => setIsMobile(checkMobile());
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const phoneCategories = useMemo(() => {
     const visiblePhotos = photos.filter((p) => !p.hidden);
@@ -76,6 +86,24 @@ export default function GalleryClient({
     return cnts;
   }, [photos]);
 
+  const renderInstructionText = (text: string) => {
+    let processedText = text;
+    if (isMobile === true) {
+      processedText = processedText.replace(/\bCLICK\b/gi, "TAP").replace(/\bDRAG\b/gi, "SWIPE");
+    } else if (isMobile === false) {
+      processedText = processedText.replace(/\bTAP\b/gi, "CLICK").replace(/\bSWIPE\b/gi, "DRAG");
+    }
+
+    const parts = processedText.split(/(CLICK|SWIPE UP|TAP|DRAG UP|SWIPE|DRAG)/gi);
+    return parts.map((part, i) => {
+      const p = part.toUpperCase();
+      if (["CLICK", "SWIPE UP", "TAP", "DRAG UP", "SWIPE", "DRAG"].includes(p)) {
+        return <span key={i} className={styles.highlight}>{part}</span>;
+      }
+      return part;
+    });
+  };
+
   return (
     <div className={styles.page}>
       {/* Page Header */}
@@ -87,7 +115,7 @@ export default function GalleryClient({
           </p>
           {content.instructionText && (
             <p className={styles.instructionText}>
-              {content.instructionText}
+              {renderInstructionText(content.instructionText)}
             </p>
           )}
         </div>
