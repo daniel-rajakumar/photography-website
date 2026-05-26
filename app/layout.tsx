@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Lumina | Photography Gallery",
+  title: "Daniel Rajakumar | Phone Photography",
   description:
-    "A curated collection of fine art landscape, portrait, and street photography.",
+    "A personal gallery of phone photos edited in Lightroom by Daniel Rajakumar.",
 };
 
 export default function RootLayout({

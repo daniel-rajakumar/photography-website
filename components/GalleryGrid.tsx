@@ -129,6 +129,7 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
                           alt={photo.alt} 
                           isInfoOpen={activePhotoInfoId === photo.filename}
                           isLandscape={isHorizontal}
+                          eager={index === 0}
                         />
                       ) : (
                         <Image
@@ -137,7 +138,7 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
                           fill
                           className={styles.wallpaper}
                           loading={index < 2 ? "eager" : "lazy"}
-                          priority={index === 0}
+                          fetchPriority={index === 0 ? "high" : "auto"}
                           sizes="(max-width: 768px) 100vw, 420px"
                         />
                       )}

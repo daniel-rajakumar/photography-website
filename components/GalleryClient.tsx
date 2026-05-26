@@ -1,10 +1,23 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useSyncExternalStore } from "react";
 import type { LocalPhoto } from "@/lib/photos";
 import GalleryGrid from "@/components/GalleryGrid";
 import CategoryFilter from "@/components/CategoryFilter";
 import styles from "@/app/page.module.css";
+
+function subscribeToViewportChanges(onStoreChange: () => void) {
+  window.addEventListener("resize", onStoreChange);
+  return () => window.removeEventListener("resize", onStoreChange);
+}
+
+function getIsMobileSnapshot() {
+  return window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768;
+}
+
+function getIsMobileServerSnapshot() {
+  return null;
+}
 
 export default function GalleryClient({ 
   photos, 
@@ -15,16 +28,11 @@ export default function GalleryClient({
 }) {
   const [activePhone, setActivePhone] = useState<string>("all");
   const [activeOrientation, setActiveOrientation] = useState<string>("all");
-  const [isMobile, setIsMobile] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    const checkMobile = () => window.matchMedia("(pointer: coarse)").matches || window.innerWidth <= 768;
-    setIsMobile(checkMobile());
-    
-    const handleResize = () => setIsMobile(checkMobile());
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const isMobile = useSyncExternalStore(
+    subscribeToViewportChanges,
+    getIsMobileSnapshot,
+    getIsMobileServerSnapshot
+  );
 
   const phoneCategories = useMemo(() => {
     const visiblePhotos = photos.filter((p) => !p.hidden);

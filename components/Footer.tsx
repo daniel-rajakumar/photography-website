@@ -12,8 +12,8 @@ export default function Footer() {
     <footer className={styles.footer}>
       <div className={styles.inner}>
         <div className={styles.brand}>
-          <span className={styles.logoMark}>L</span>
-          <span className={styles.logoText}>UMINA</span>
+          <span className={styles.logoMark}>D</span>
+          <span className={styles.logoText}>ANIEL</span>
         </div>
 
         <p className={styles.tagline}>
@@ -42,7 +42,7 @@ export default function Footer() {
         </div>
 
         <div className={styles.copyright}>
-          <span>© {new Date().getFullYear()} Lumina Photography</span>
+          <span>© {new Date().getFullYear()} Daniel Rajakumar Photography</span>
           <span className={styles.dot}>·</span>
           <span>All Rights Reserved</span>
         </div>
