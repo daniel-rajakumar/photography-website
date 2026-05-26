@@ -5,6 +5,7 @@ import path from "path";
 import { execSync } from "child_process";
 import { exiftool } from "exiftool-vendored";
 import { revalidatePath } from "next/cache";
+import sharp from "sharp";
 
 export interface LocalPhoto {
   filename: string;
@@ -113,23 +114,38 @@ function getOrientationFromDimensions(width: unknown, height: unknown): LocalPho
 
 async function getImageMetadata(filePath: string): Promise<{
   phone: string;
-  orientation: LocalPhoto["category"];
+  orientation: LocalPhoto["category"] | null;
 }> {
   const fallback = {
     phone: "iPhone 15 Pro",
-    orientation: "landscape" as const,
+    orientation: null,
   };
+
+  let orientation: LocalPhoto["category"] | null = fallback.orientation;
+
+  try {
+    const metadata = await sharp(filePath).metadata();
+    orientation = getOrientationFromDimensions(metadata.width, metadata.height);
+  } catch (error) {
+    console.error(`Failed to read dimensions for ${filePath}:`, error);
+  }
 
   try {
     const metadata = await exiftool.read(filePath);
 
     return {
       phone: metadata.Model ? String(metadata.Model) : fallback.phone,
-      orientation: getOrientationFromDimensions(metadata.ImageWidth, metadata.ImageHeight) ?? fallback.orientation,
+      orientation:
+        orientation ??
+        getOrientationFromDimensions(metadata.ImageWidth, metadata.ImageHeight) ??
+        fallback.orientation,
     };
   } catch (error) {
     console.error(`Failed to read EXIF for ${filePath}:`, error);
-    return fallback;
+    return {
+      phone: fallback.phone,
+      orientation,
+    };
   }
 }
 
@@ -221,7 +237,7 @@ export async function getLocalPhotos(): Promise<LocalPhoto[]> {
         filename: photoFile.identity,
         imagePath: photoFile.imagePath,
         originalPath: photoFile.originalPath,
-        category: imageMetadata.orientation,
+        category: imageMetadata.orientation ?? existingMeta.category,
         phone: imageMetadata.phone,
         hasOriginal: !!photoFile.originalPath,
       };
@@ -235,7 +251,7 @@ export async function getLocalPhotos(): Promise<LocalPhoto[]> {
       imagePath: photoFile.imagePath,
       originalPath: photoFile.originalPath,
       title: formattedTitle,
-      category: imageMetadata.orientation,
+      category: imageMetadata.orientation ?? "portrait",
       date: getFileDate(photoFile.filePath),
       phone: imageMetadata.phone,
       location: "",
