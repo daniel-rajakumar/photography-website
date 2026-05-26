@@ -537,6 +537,18 @@
   }
 }
 
+@media (orientation: landscape) and (max-height: 520px) {
+  .grid {
+    gap: 3rem;
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+  }
+
+  .phoneContainer.landscape {
+    max-width: min(760px, calc(100vw - 5rem), calc((100dvh - 7rem) * 1.92));
+  }
+}
+
 /* ========================================
    iOS Swipe-up Info Panel
    ======================================== */
