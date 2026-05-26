@@ -11,7 +11,7 @@ export default function GalleryClient({
   content 
 }: { 
   photos: LocalPhoto[];
-  content: { galleryTitle: string; galleryDescription: string };
+  content: { galleryTitle: string; galleryDescription: string; instructionText?: string };
 }) {
   const [activePhone, setActivePhone] = useState<string>("all");
   const [activeOrientation, setActiveOrientation] = useState<string>("all");
@@ -85,6 +85,11 @@ export default function GalleryClient({
           <p className={styles.pageDesc}>
             {content.galleryDescription}
           </p>
+          {content.instructionText && (
+            <p className={styles.instructionText}>
+              {content.instructionText}
+            </p>
+          )}
         </div>
       </header>
 
