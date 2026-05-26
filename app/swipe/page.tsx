@@ -20,14 +20,17 @@ export default async function SwipePage(props: { searchParams: Promise<{ [key: s
   }
 
   return (
-    <div style={{ minHeight: "100dvh", background: "var(--color-bg)", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-      {filtered.length > 0 ? (
-        <SwipeGrid photos={filtered} />
-      ) : (
-        <div style={{ textAlign: "center", color: "var(--color-text-secondary)" }}>
-          <p>No photos match these filters.</p>
-        </div>
-      )}
-    </div>
+    <>
+      <style>{`html, body { overflow: hidden; height: 100dvh; }`}</style>
+      <div style={{ height: "100dvh", overflow: "hidden", background: "var(--color-bg)" }}>
+        {filtered.length > 0 ? (
+          <SwipeGrid photos={filtered} />
+        ) : (
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", color: "var(--color-text-secondary)" }}>
+            <p>No photos match these filters.</p>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
