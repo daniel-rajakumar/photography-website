@@ -374,6 +374,14 @@
   border-radius: 35px;
 }
 
+.landscape .homeIndicator {
+  top: auto;
+  bottom: 24px;
+  width: 140px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.22);
+}
+
 /* Landscape Buttons */
 .landscape .physicalButton {
   width: auto;
@@ -382,7 +390,7 @@
 }
 
 .landscape .actionBtn {
-  top: -3px;
+  top: -14px;
   left: 135px;
   width: 26px;
   height: 3px;
@@ -390,7 +398,7 @@
 }
 
 .landscape .volumeUp {
-  top: -3px;
+  top: -14px;
   left: 175px;
   width: 50px;
   height: 3px;
@@ -398,7 +406,7 @@
 }
 
 .landscape .volumeDown {
-  top: -3px;
+  top: -14px;
   left: 235px;
   width: 50px;
   height: 3px;
@@ -407,7 +415,7 @@
 
 .landscape .powerBtn {
   right: auto;
-  bottom: -3px;
+  bottom: -14px;
   left: 195px;
   width: 65px;
   height: 3px;

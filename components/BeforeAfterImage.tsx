@@ -103,7 +103,7 @@ export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props)
       <div 
         className={styles.sliderLine} 
         style={{ 
-          top: `max(12px, ${sliderPos}%)`,
+          top: `max(22px, ${sliderPos}%)`,
           transition: isDragging ? "none" : "top 0.4s cubic-bezier(0.32, 0.72, 0, 1)"
         }}
         onPointerDown={handlePointerDown}
