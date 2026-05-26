@@ -7,6 +7,7 @@ interface CategoryFilterProps {
   onChange: (category: string) => void;
   categories: string[];
   counts: Record<string, number>;
+  allLabel?: string;
 }
 
 export default function CategoryFilter({
@@ -14,10 +15,11 @@ export default function CategoryFilter({
   onChange,
   categories,
   counts,
+  allLabel = "All",
 }: CategoryFilterProps) {
   const getLabel = (cat: string) => {
-    if (cat === "all") return "All Phones";
-    return cat;
+    if (cat === "all") return allLabel;
+    return cat.charAt(0).toUpperCase() + cat.slice(1);
   };
 
   return (

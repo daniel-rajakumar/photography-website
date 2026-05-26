@@ -14,6 +14,7 @@ export default function GalleryClient({
   content: { galleryTitle: string; galleryDescription: string };
 }) {
   const [activePhone, setActivePhone] = useState<string>("all");
+  const [activeOrientation, setActiveOrientation] = useState<string>("all");
 
   const phoneCategories = useMemo(() => {
     const visiblePhotos = photos.filter((p) => !p.hidden);
@@ -22,10 +23,20 @@ export default function GalleryClient({
     return ["all", ...phones];
   }, [photos]);
 
+  const orientationCategories = useMemo(() => {
+    const visiblePhotos = photos.filter((p) => !p.hidden);
+    const orientations = Array.from(new Set(visiblePhotos.map((p) => p.category).filter(Boolean)));
+    orientations.sort();
+    return ["all", ...orientations];
+  }, [photos]);
+
   const filteredPhotos = useMemo(() => {
     let result = photos.filter((p) => !p.hidden);
     if (activePhone !== "all") {
       result = result.filter((p) => p.phone === activePhone);
+    }
+    if (activeOrientation !== "all") {
+      result = result.filter((p) => p.category === activeOrientation);
     }
     
     // Sort logic: featured photos first, then preserve the original order (which is by uploadIndex/order from server)
@@ -41,7 +52,7 @@ export default function GalleryClient({
       // 3. Fallback to uploadIndex (descending) as it was originally
       return (b.uploadIndex || 0) - (a.uploadIndex || 0);
     });
-  }, [activePhone, photos]);
+  }, [activePhone, activeOrientation, photos]);
 
   const counts = useMemo(() => {
     const visiblePhotos = photos.filter((p) => !p.hidden);
@@ -49,6 +60,17 @@ export default function GalleryClient({
     visiblePhotos.forEach((p) => {
       if (p.phone) {
          cnts[p.phone] = (cnts[p.phone] ?? 0) + 1;
+      }
+    });
+    return cnts;
+  }, [photos]);
+
+  const orientationCounts = useMemo(() => {
+    const visiblePhotos = photos.filter((p) => !p.hidden);
+    const cnts: Record<string, number> = { all: visiblePhotos.length };
+    visiblePhotos.forEach((p) => {
+      if (p.category) {
+         cnts[p.category] = (cnts[p.category] ?? 0) + 1;
       }
     });
     return cnts;
@@ -69,12 +91,22 @@ export default function GalleryClient({
       {/* Filter + Grid */}
       <section className={styles.gallerySection} aria-label="Photo gallery">
         <div className={`${styles.filterBar} container`}>
-          <CategoryFilter
-            active={activePhone}
-            onChange={setActivePhone}
-            categories={phoneCategories}
-            counts={counts}
-          />
+          <div className={styles.filterGroups}>
+            <CategoryFilter
+              active={activePhone}
+              onChange={setActivePhone}
+              categories={phoneCategories}
+              counts={counts}
+              allLabel="All Phones"
+            />
+            <CategoryFilter
+              active={activeOrientation}
+              onChange={setActiveOrientation}
+              categories={orientationCategories}
+              counts={orientationCounts}
+              allLabel="All Orientations"
+            />
+          </div>
           <span className={styles.resultCount} aria-live="polite">
             {filteredPhotos.length} photo{filteredPhotos.length !== 1 ? "s" : ""}
           </span>
