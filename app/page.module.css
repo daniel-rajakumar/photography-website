@@ -153,6 +153,24 @@
   line-height: 1.6;
 }
 
+@media (orientation: landscape) and (max-height: 520px) {
+  .pageHeader {
+    padding-top: 0.65rem;
+    padding-bottom: 0.65rem;
+  }
+
+  .instructionText {
+    padding: 0.45rem 0.8rem;
+    max-width: min(76vw, 680px);
+    font-size: 0.58rem;
+    line-height: 1.35;
+    letter-spacing: 0.055em;
+    border-radius: 12px;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+}
+
 .highlight {
   color: var(--color-gold);
   font-weight: 800;
