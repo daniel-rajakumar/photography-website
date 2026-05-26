@@ -537,6 +537,12 @@
   }
 }
 
+@media (orientation: landscape) and (max-height: 520px) {
+  .phoneContainer.landscape {
+    max-width: 80%;
+  }
+}
+
 /* ========================================
    iOS Swipe-up Info Panel
    ======================================== */
