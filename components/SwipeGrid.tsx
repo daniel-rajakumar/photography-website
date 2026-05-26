@@ -2,12 +2,19 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import type { LocalPhoto } from "@/lib/photos";
 import BeforeAfterImage from "./BeforeAfterImage";
 import styles from "./SwipeGrid.module.css";
 
 interface GalleryGridProps {
   photos: LocalPhoto[];
+  filters: {
+    activePhone: string;
+    activeOrientation: string;
+    phones: string[];
+    orientations: string[];
+  };
 }
 
 function parsePhotoDateTime(value?: string) {
@@ -35,9 +42,10 @@ function formatCaptureTime(value?: string) {
 
 const VISIBLE_RANGE = 2; // how many cards to show on each side
 
-export default function SwipeGrid({ photos }: GalleryGridProps) {
+export default function SwipeGrid({ photos, filters }: GalleryGridProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [closedPhotoInfoIds, setClosedPhotoInfoIds] = useState<Set<string>>(() => new Set());
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   // Drag state kept in a single ref to avoid stale closures
   const drag = useRef({ active: false, startX: 0, startY: 0, offset: 0, intent: null as "h" | "v" | null });
@@ -77,6 +85,20 @@ export default function SwipeGrid({ photos }: GalleryGridProps) {
     drag.current.intent = null;
     setDragOffset(0);
   }, [photos.length]);
+
+  const getFilterHref = (next: { phone?: string; orientation?: string }) => {
+    const params = new URLSearchParams();
+    const phone = next.phone ?? filters.activePhone;
+    const orientation = next.orientation ?? filters.activeOrientation;
+
+    if (phone !== "all") params.set("phone", phone);
+    if (orientation !== "all") params.set("orientation", orientation);
+
+    const query = params.toString();
+    return `/swipe${query ? `?${query}` : ""}`;
+  };
+
+  const closeFilters = () => setFiltersOpen(false);
 
   // ── Pointer handlers ──────────────────────────────────────────────────────
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -169,6 +191,81 @@ export default function SwipeGrid({ photos }: GalleryGridProps) {
       onPointerCancel={handlePointerUp}
       style={{ touchAction: "pan-y" }}
     >
+      <div
+        className={styles.filterControl}
+        onPointerDown={(e) => e.stopPropagation()}
+        onPointerMove={(e) => e.stopPropagation()}
+        onPointerUp={(e) => e.stopPropagation()}
+      >
+        <button
+          type="button"
+          className={styles.filterToggle}
+          aria-expanded={filtersOpen}
+          aria-controls="swipe-filter-menu"
+          onClick={() => setFiltersOpen((open) => !open)}
+        >
+          Filters
+        </button>
+
+        {filtersOpen && (
+          <div
+            id="swipe-filter-menu"
+            className={styles.filterMenu}
+            role="dialog"
+            aria-label="Photo filters"
+          >
+            <div className={styles.filterSection}>
+              <p className={styles.filterLabel}>Phone</p>
+              <div className={styles.filterOptions}>
+                {filters.phones.map((phone) => (
+                  <Link
+                    key={phone}
+                    href={getFilterHref({
+                      phone: filters.activePhone === phone ? "all" : phone,
+                    })}
+                    onClick={closeFilters}
+                    className={`${styles.filterOption} ${
+                      filters.activePhone === phone ? styles.filterOptionActive : ""
+                    }`}
+                  >
+                    {phone}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <div className={styles.filterSection}>
+              <p className={styles.filterLabel}>Orientation</p>
+              <div className={styles.filterOptions}>
+                {filters.orientations.map((orientation) => (
+                  <Link
+                    key={orientation}
+                    href={getFilterHref({
+                      orientation:
+                        filters.activeOrientation === orientation
+                          ? "all"
+                          : orientation,
+                    })}
+                    onClick={closeFilters}
+                    className={`${styles.filterOption} ${
+                      filters.activeOrientation === orientation
+                        ? styles.filterOptionActive
+                        : ""
+                    }`}
+                  >
+                    {orientation.charAt(0).toUpperCase() + orientation.slice(1)}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <Link href="/swipe" onClick={closeFilters} className={styles.clearFilters}>
+              Clear Filters
+            </Link>
+          </div>
+        )}
+      </div>
+
       {/* 3-D Stage */}
       <div className={styles.stage}>
         {photos.map((photo, index) => {
@@ -269,17 +366,6 @@ export default function SwipeGrid({ photos }: GalleryGridProps) {
         })}
       </div>
 
-      {/* Dot indicators */}
-      <div className={styles.dots} aria-hidden="true">
-        {photos.map((_, i) => (
-          <button
-            key={i}
-            className={`${styles.dot} ${i === currentIndex ? styles.dotActive : ""}`}
-            onClick={() => goTo(i)}
-            aria-label={`Go to photo ${i + 1}`}
-          />
-        ))}
-      </div>
     </div>
   );
 }
