@@ -112,7 +112,7 @@ function getOrientationFromDimensions(width: unknown, height: unknown): LocalPho
   return imageWidth >= imageHeight ? "landscape" : "portrait";
 }
 
-async function getImageMetadata(filePath: string): Promise<{
+async function getImageMetadata(filePath: string, phoneMetadataPath = filePath): Promise<{
   phone: string;
   orientation: LocalPhoto["category"] | null;
 }> {
@@ -130,11 +130,19 @@ async function getImageMetadata(filePath: string): Promise<{
     console.error(`Failed to read dimensions for ${filePath}:`, error);
   }
 
+  let phone = fallback.phone;
+
+  try {
+    const phoneMetadata = await exiftool.read(phoneMetadataPath);
+    phone = phoneMetadata.Model ? String(phoneMetadata.Model) : fallback.phone;
+  } catch (error) {
+    console.error(`Failed to read phone EXIF for ${phoneMetadataPath}:`, error);
+  }
+
   try {
     const metadata = await exiftool.read(filePath);
-
     return {
-      phone: metadata.Model ? String(metadata.Model) : fallback.phone,
+      phone: phone === fallback.phone && metadata.Model ? String(metadata.Model) : phone,
       orientation:
         orientation ??
         getOrientationFromDimensions(metadata.ImageWidth, metadata.ImageHeight) ??
@@ -143,7 +151,7 @@ async function getImageMetadata(filePath: string): Promise<{
   } catch (error) {
     console.error(`Failed to read EXIF for ${filePath}:`, error);
     return {
-      phone: fallback.phone,
+      phone,
       orientation,
     };
   }
@@ -203,6 +211,7 @@ export async function getLocalPhotos(): Promise<LocalPhoto[]> {
       return {
         identity: dirent.name,
         filePath: editedPath,
+        phoneMetadataPath: rawPath ?? editedPath,
         imagePath: toPhotoUrl(editedPath),
         originalPath: rawPath ? toPhotoUrl(rawPath) : undefined,
       };
@@ -220,6 +229,7 @@ export async function getLocalPhotos(): Promise<LocalPhoto[]> {
       return {
         identity: file,
         filePath,
+        phoneMetadataPath: fs.existsSync(originalPath) ? originalPath : filePath,
         imagePath: toPhotoUrl(filePath),
         originalPath: fs.existsSync(originalPath) ? toPhotoUrl(originalPath) : undefined,
       };
@@ -229,7 +239,7 @@ export async function getLocalPhotos(): Promise<LocalPhoto[]> {
 
   const allPhotos: LocalPhoto[] = await Promise.all(files.map(async (photoFile) => {
     const existingMeta = findSavedMetadata(savedMetadata, photoFile.identity, photoFile.imagePath);
-    const imageMetadata = await getImageMetadata(photoFile.filePath);
+    const imageMetadata = await getImageMetadata(photoFile.filePath, photoFile.phoneMetadataPath);
 
     if (existingMeta) {
       return {
