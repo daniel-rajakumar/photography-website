@@ -148,6 +148,8 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
                           editedSrc={imageUrl} 
                           originalSrc={`/photos/originals/${photo.filename}`} 
                           alt={photo.alt} 
+                          isInfoOpen={activePhotoInfoId === photo.filename}
+                          isLandscape={isHorizontal}
                         />
                       ) : (
                         <Image
