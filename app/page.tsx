@@ -1,24 +1,33 @@
-import fs from "fs";
-import path from "path";
-import { getLocalPhotos } from "@/lib/photos";
-import GalleryClient from "@/components/GalleryClient";
+import Image from "next/image";
+import Link from "next/link";
+import styles from "./page.module.css";
 
-// Revalidate every 60s so new Sanity photos show up automatically
-export const revalidate = 60;
+export default function HomePage() {
+  return (
+    <div className={styles.homePage}>
+      <section className={styles.homeHero} aria-label="Daniel Rajakumar photography">
+        <Image
+          src="/photos/001 - 2026-05-18 - InterVarsitys Basilia 2026/edited.jpg"
+          alt="Billiards room photographed on an iPhone"
+          fill
+          priority
+          sizes="100vw"
+          className={styles.homeHeroImage}
+        />
+        <div className={styles.homeHeroOverlay} />
 
-export default async function GalleryPage() {
-  const photos = await getLocalPhotos();
-  
-  const contentPath = path.join(process.cwd(), "data", "content.json");
-  let content = {
-    galleryTitle: "The Gallery",
-    galleryDescription: "A complete collection spanning landscapes, portraits, street scenes, abstract macro work, and architectural studies.",
-    instructionText: "Drag the white line to see unedited photo"
-  };
-  
-  if (fs.existsSync(contentPath)) {
-    content = JSON.parse(fs.readFileSync(contentPath, "utf-8"));
-  }
-  
-  return <GalleryClient photos={photos} content={content} />;
+        <div className={styles.homeHeroContent}>
+          <p className={styles.homeEyebrow}>Phone Photography</p>
+          <h1 className={styles.homeTitle}>Daniel Rajakumar</h1>
+          <p className={styles.homeDescription}>
+            A personal gallery of iPhone photos edited in Lightroom, with original
+            comparisons for the shots that started on the camera roll.
+          </p>
+          <Link href="/photos" className={styles.homeCta}>
+            View Photos
+          </Link>
+        </div>
+      </section>
+    </div>
+  );
 }

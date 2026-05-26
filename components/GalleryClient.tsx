@@ -58,8 +58,10 @@ export default function GalleryClient({
     getDeviceOrientationSnapshot,
     getDeviceOrientationServerSnapshot
   );
+  const shouldUseDeviceOrientation = isMobile === true;
+  const shouldShowFilters = isMobile !== true;
   const effectiveOrientation =
-    isMobile === true ? deviceOrientation : activeOrientation;
+    shouldUseDeviceOrientation ? deviceOrientation : activeOrientation;
 
   const phoneCategories = useMemo(() => {
     const visiblePhotos = photos.filter((p) => !p.hidden);
@@ -77,7 +79,7 @@ export default function GalleryClient({
 
   const filteredPhotos = useMemo(() => {
     let result = photos.filter((p) => !p.hidden);
-    if (activePhone !== "all") {
+    if (!shouldUseDeviceOrientation && activePhone !== "all") {
       result = result.filter((p) => p.phone === activePhone);
     }
     if (effectiveOrientation && effectiveOrientation !== "all") {
@@ -97,7 +99,7 @@ export default function GalleryClient({
       // 3. Fallback to uploadIndex (descending) as it was originally
       return (b.uploadIndex || 0) - (a.uploadIndex || 0);
     });
-  }, [activePhone, effectiveOrientation, photos]);
+  }, [activePhone, effectiveOrientation, photos, shouldUseDeviceOrientation]);
 
   const counts = useMemo(() => {
     const visiblePhotos = photos.filter((p) => !p.hidden);
@@ -144,10 +146,6 @@ export default function GalleryClient({
       {/* Page Header */}
       <header className={styles.pageHeader}>
         <div className="container">
-          <h1 className={styles.pageTitle}>{content.galleryTitle}</h1>
-          <p className={styles.pageDesc}>
-            {content.galleryDescription}
-          </p>
           {content.instructionText && (
             <p className={styles.instructionText}>
               {renderInstructionText(content.instructionText)}
@@ -158,29 +156,27 @@ export default function GalleryClient({
 
       {/* Filter + Grid */}
       <section className={styles.gallerySection} aria-label="Photo gallery">
-        <div className={`${styles.filterBar} container`}>
-          <div className={styles.filterGroups}>
-            <CategoryFilter
-              active={activePhone}
-              onChange={setActivePhone}
-              categories={phoneCategories}
-              counts={counts}
-              allLabel="All Phones"
-            />
-            {isMobile !== true && (
-              <>
-                <div className={styles.filterDivider} />
-                <CategoryFilter
-                  active={activeOrientation}
-                  onChange={setActiveOrientation}
-                  categories={orientationCategories}
-                  counts={orientationCounts}
-                  allLabel="All Orientations"
-                />
-              </>
-            )}
+        {shouldShowFilters && (
+          <div className={`${styles.filterBar} container`}>
+            <div className={styles.filterGroups}>
+              <CategoryFilter
+                active={activePhone}
+                onChange={setActivePhone}
+                categories={phoneCategories}
+                counts={counts}
+                allLabel="All Phones"
+              />
+              <div className={styles.filterDivider} />
+              <CategoryFilter
+                active={activeOrientation}
+                onChange={setActiveOrientation}
+                categories={orientationCategories}
+                counts={orientationCounts}
+                allLabel="All Orientations"
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         {filteredPhotos.length > 0 ? (
           <GalleryGrid photos={filteredPhotos} />
