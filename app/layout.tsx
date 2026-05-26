@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import RotateLock from "@/components/RotateLock";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 import "./globals.css";
@@ -74,6 +75,7 @@ export default function RootLayout({
         <RotateLock>
           <main>{children}</main>
         </RotateLock>
+        <Analytics />
       </body>
     </html>
   );
