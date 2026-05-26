@@ -19,7 +19,7 @@ export default function AdminDashboard({ initialPhotos }: { initialPhotos: Local
       const updatedPhotos = await savePhotoMetadata(dataToSave);
       setPhotos(updatedPhotos);
       setMessage({ text: "All changes saved!", type: "success" });
-    } catch (err) {
+    } catch {
       setMessage({ text: "An error occurred while saving.", type: "error" });
     }
     setSaving(false);
@@ -27,9 +27,12 @@ export default function AdminDashboard({ initialPhotos }: { initialPhotos: Local
     setTimeout(() => setMessage(null), 3000);
   };
 
-  const handleFieldChange = (index: number, field: keyof LocalPhoto, value: any) => {
+  const handleFieldChange = <K extends keyof LocalPhoto>(index: number, field: K, value: LocalPhoto[K]) => {
     const updated = [...photos];
-    (updated[index] as any)[field] = value;
+    updated[index] = {
+      ...updated[index],
+      [field]: value,
+    };
     setPhotos(updated);
 
     if (debouncedSaveRef.current) clearTimeout(debouncedSaveRef.current);
@@ -66,7 +69,7 @@ export default function AdminDashboard({ initialPhotos }: { initialPhotos: Local
           <div key={photo.filename} className={styles.card}>
             <div className={styles.imageContainer}>
               <Image 
-                src={`/photos/${photo.filename}`}
+                src={photo.imagePath ?? `/photos/${photo.filename}`}
                 alt={photo.alt}
                 fill
                 className={styles.image}
