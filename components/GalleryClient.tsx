@@ -123,33 +123,16 @@ export default function GalleryClient({
     return cnts;
   }, [photos]);
 
-  const renderInstructionText = (text: string) => {
-    let processedText = text;
-    if (isMobile === true) {
-      processedText = processedText.replace(/\bCLICK\b/gi, "TAP").replace(/\bDRAG\b/gi, "SWIPE");
-    } else if (isMobile === false) {
-      processedText = processedText.replace(/\bTAP\b/gi, "CLICK").replace(/\bSWIPE\b/gi, "DRAG");
-    }
 
-    const parts = processedText.split(/(CLICK|SWIPE UP|TAP|DRAG UP|SWIPE|DRAG)/gi);
-    return parts.map((part, i) => {
-      const p = part.toUpperCase();
-      if (["CLICK", "SWIPE UP", "TAP", "DRAG UP", "SWIPE", "DRAG"].includes(p)) {
-        return <span key={i} className={styles.highlight}>{part}</span>;
-      }
-      return part;
-    });
-  };
 
   return (
     <div className={styles.page}>
       {/* Page Header */}
       <header className={styles.pageHeader}>
         <div className="container">
-          {content.instructionText && (
-            <p className={styles.instructionText}>
-              {renderInstructionText(content.instructionText)}
-            </p>
+          <h1 className={styles.pageTitle}>{content.galleryTitle || "Phone Photography"}</h1>
+          {content.galleryDescription && (
+            <p className={styles.pageDesc}>{content.galleryDescription}</p>
           )}
         </div>
       </header>
