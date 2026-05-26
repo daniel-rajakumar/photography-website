@@ -145,6 +145,7 @@ export default function BeforeAfterImage({
     >
       {/* Bottom layer: Unedited (Original) */}
       <Image src={originalSrc} alt={`Unedited ${alt}`} fill className={styles.image} sizes="(max-width: 768px) 100vw, 50vw" />
+      <div className={styles.uneditedLabel}>ORIGINAL</div>
       
       {/* Top layer: Edited */}
       <div 
