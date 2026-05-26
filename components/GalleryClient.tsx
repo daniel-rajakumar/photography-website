@@ -113,9 +113,6 @@ export default function GalleryClient({
               allLabel="All Orientations"
             />
           </div>
-          <span className={styles.resultCount} aria-live="polite">
-            {filteredPhotos.length} photo{filteredPhotos.length !== 1 ? "s" : ""}
-          </span>
         </div>
 
         {filteredPhotos.length > 0 ? (
