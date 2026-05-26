@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { LocalPhoto } from "@/lib/photos";
 import BeforeAfterImage from "./BeforeAfterImage";
 import styles from "./SwipeGrid.module.css";
@@ -43,12 +44,20 @@ function formatCaptureTime(value?: string) {
 const VISIBLE_RANGE = 2; // how many cards to show on each side
 
 export default function SwipeGrid({ photos, filters }: GalleryGridProps) {
+  const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [closedPhotoInfoIds, setClosedPhotoInfoIds] = useState<Set<string>>(() => new Set());
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   // Drag state kept in a single ref to avoid stale closures
-  const drag = useRef({ active: false, startX: 0, startY: 0, offset: 0, intent: null as "h" | "v" | null });
+  const drag = useRef({
+    active: false,
+    startX: 0,
+    startY: 0,
+    offsetX: 0,
+    offsetY: 0,
+    intent: null as "h" | "v" | null,
+  });
   const [dragOffset, setDragOffset] = useState(0); // only for re-render
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -80,7 +89,8 @@ export default function SwipeGrid({ photos, filters }: GalleryGridProps) {
   const goTo = useCallback((index: number) => {
     const nextIndex = Math.max(0, Math.min(photos.length - 1, index));
     setCurrentIndex(nextIndex);
-    drag.current.offset = 0;
+    drag.current.offsetX = 0;
+    drag.current.offsetY = 0;
     drag.current.active = false;
     drag.current.intent = null;
     setDragOffset(0);
@@ -103,7 +113,14 @@ export default function SwipeGrid({ photos, filters }: GalleryGridProps) {
   // ── Pointer handlers ──────────────────────────────────────────────────────
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.pointerType === "mouse" && e.button !== 0) return;
-    drag.current = { active: true, startX: e.clientX, startY: e.clientY, offset: 0, intent: null };
+    drag.current = {
+      active: true,
+      startX: e.clientX,
+      startY: e.clientY,
+      offsetX: 0,
+      offsetY: 0,
+      intent: null,
+    };
     containerRef.current?.setPointerCapture(e.pointerId);
   };
 
@@ -118,33 +135,46 @@ export default function SwipeGrid({ photos, filters }: GalleryGridProps) {
     if (d.intent === null && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) {
       d.intent = Math.abs(dx) >= Math.abs(dy) ? "h" : "v";
     }
-    if (d.intent !== "h") return;
 
-    d.offset = dx;
-    setDragOffset(dx);
+    if (d.intent === "h") {
+      d.offsetX = dx;
+      setDragOffset(dx);
+    } else if (d.intent === "v") {
+      d.offsetY = dy;
+    }
   };
 
   const handlePointerUp = () => {
     const d = drag.current;
     if (!d.active) return;
 
-    const wasDragging = d.intent === "h";
-    const dx = d.offset;
+    const wasHorizontalDrag = d.intent === "h";
+    const wasVerticalDrag = d.intent === "v";
+    const dx = d.offsetX;
+    const dy = d.offsetY;
     const width = containerWidth;
     const threshold = width * 0.15; // 15% of screen width
 
-    if (wasDragging) {
+    if (wasHorizontalDrag) {
       if (dx < -threshold && currentIndex < photos.length - 1) {
         goTo(currentIndex + 1);
       } else if (dx > threshold && currentIndex > 0) {
         goTo(currentIndex - 1);
+      } else if (dx > threshold && currentIndex === 0) {
+        router.push("/");
       } else {
         // snap back in place
-        drag.current.offset = 0;
+        drag.current.offsetX = 0;
+        drag.current.offsetY = 0;
         drag.current.active = false;
         drag.current.intent = null;
         setDragOffset(0);
       }
+    } else if (wasVerticalDrag && dy > Math.max(72, width * 0.08)) {
+      setFiltersOpen(true);
+      drag.current.active = false;
+      drag.current.intent = null;
+      drag.current.offsetY = 0;
     } else {
       drag.current.active = false;
       drag.current.intent = null;
@@ -189,31 +219,34 @@ export default function SwipeGrid({ photos, filters }: GalleryGridProps) {
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
-      style={{ touchAction: "pan-y" }}
+      style={{ touchAction: "none" }}
     >
-      <div
-        className={styles.filterControl}
-        onPointerDown={(e) => e.stopPropagation()}
-        onPointerMove={(e) => e.stopPropagation()}
-        onPointerUp={(e) => e.stopPropagation()}
-      >
-        <button
-          type="button"
-          className={styles.filterToggle}
-          aria-expanded={filtersOpen}
-          aria-controls="swipe-filter-menu"
-          onClick={() => setFiltersOpen((open) => !open)}
+      {filtersOpen && (
+        <div
+          className={styles.filterOverlay}
+          onPointerDown={(e) => e.stopPropagation()}
+          onPointerMove={(e) => e.stopPropagation()}
+          onPointerUp={(e) => e.stopPropagation()}
         >
-          Filters
-        </button>
-
-        {filtersOpen && (
           <div
             id="swipe-filter-menu"
             className={styles.filterMenu}
             role="dialog"
             aria-label="Photo filters"
+            aria-modal="true"
           >
+            <div className={styles.filterHeader}>
+              <p className={styles.filterTitle}>Filters</p>
+              <button
+                type="button"
+                className={styles.filterClose}
+                onClick={closeFilters}
+                aria-label="Close filters"
+              >
+                Close
+              </button>
+            </div>
+
             <div className={styles.filterSection}>
               <p className={styles.filterLabel}>Phone</p>
               <div className={styles.filterOptions}>
@@ -263,8 +296,8 @@ export default function SwipeGrid({ photos, filters }: GalleryGridProps) {
               Clear Filters
             </Link>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* 3-D Stage */}
       <div className={styles.stage}>
