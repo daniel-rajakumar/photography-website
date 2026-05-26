@@ -37,8 +37,8 @@ const VISIBLE_RANGE = 2; // how many cards to show on each side
 
 export default function SwipeGrid({ photos }: GalleryGridProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [outgoingActiveIndex, setOutgoingActiveIndex] = useState<number | null>(null);
   const [closedPhotoInfoIds, setClosedPhotoInfoIds] = useState<Set<string>>(() => new Set());
-  const [isSwiping, setIsSwiping] = useState(false);
 
   // Drag state kept in a single ref to avoid stale closures
   const drag = useRef({ active: false, startX: 0, startY: 0, offset: 0, intent: null as "h" | "v" | null });
@@ -46,12 +46,12 @@ export default function SwipeGrid({ photos }: GalleryGridProps) {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(390);
-  const clearSwipeTimeoutRef = useRef<number | null>(null);
+  const clearOutgoingIndexTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     return () => {
-      if (clearSwipeTimeoutRef.current !== null) {
-        window.clearTimeout(clearSwipeTimeoutRef.current);
+      if (clearOutgoingIndexTimeoutRef.current !== null) {
+        window.clearTimeout(clearOutgoingIndexTimeoutRef.current);
       }
     };
   }, []);
@@ -71,16 +71,6 @@ export default function SwipeGrid({ photos }: GalleryGridProps) {
     return () => observer.disconnect();
   }, []);
 
-  const finishSwipeAfterTransition = useCallback(() => {
-    if (clearSwipeTimeoutRef.current !== null) {
-      window.clearTimeout(clearSwipeTimeoutRef.current);
-    }
-    clearSwipeTimeoutRef.current = window.setTimeout(() => {
-      setIsSwiping(false);
-      clearSwipeTimeoutRef.current = null;
-    }, 520);
-  }, []);
-
   const togglePhotoInfo = (filename: string) => {
     setClosedPhotoInfoIds((current) => {
       const next = new Set(current);
@@ -90,14 +80,24 @@ export default function SwipeGrid({ photos }: GalleryGridProps) {
   };
 
   const goTo = useCallback((index: number) => {
-    setIsSwiping(true);
-    setCurrentIndex(Math.max(0, Math.min(photos.length - 1, index)));
+    const nextIndex = Math.max(0, Math.min(photos.length - 1, index));
+    if (nextIndex !== currentIndex) {
+      setOutgoingActiveIndex(currentIndex);
+      if (clearOutgoingIndexTimeoutRef.current !== null) {
+        window.clearTimeout(clearOutgoingIndexTimeoutRef.current);
+      }
+      clearOutgoingIndexTimeoutRef.current = window.setTimeout(() => {
+        setOutgoingActiveIndex(null);
+        clearOutgoingIndexTimeoutRef.current = null;
+      }, 520);
+    }
+
+    setCurrentIndex(nextIndex);
     drag.current.offset = 0;
     drag.current.active = false;
     drag.current.intent = null;
     setDragOffset(0);
-    finishSwipeAfterTransition();
-  }, [finishSwipeAfterTransition, photos.length]);
+  }, [currentIndex, photos.length]);
 
   // ── Pointer handlers ──────────────────────────────────────────────────────
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -119,7 +119,6 @@ export default function SwipeGrid({ photos }: GalleryGridProps) {
     }
     if (d.intent !== "h") return;
 
-    setIsSwiping(true);
     d.offset = dx;
     setDragOffset(dx);
   };
@@ -144,12 +143,10 @@ export default function SwipeGrid({ photos }: GalleryGridProps) {
         drag.current.active = false;
         drag.current.intent = null;
         setDragOffset(0);
-        finishSwipeAfterTransition();
       }
     } else {
       drag.current.active = false;
       drag.current.intent = null;
-      setIsSwiping(false);
     }
   };
 
@@ -204,6 +201,8 @@ export default function SwipeGrid({ photos }: GalleryGridProps) {
           const captureDate = formatCaptureDate(photo.date);
           const captureTime = formatCaptureTime(photo.date);
           const isInfoOpen = !closedPhotoInfoIds.has(photo.filename);
+          const isOriginalLabelEligible =
+            offset === 0 || index === outgoingActiveIndex;
 
           return (
             <div key={photo.filename} style={getCardStyle(offset)} className={styles.cardWrapper}>
@@ -251,7 +250,7 @@ export default function SwipeGrid({ photos }: GalleryGridProps) {
                             isInfoOpen={isInfoOpen}
                             isLandscape={isHorizontal}
                             eager={index === 0}
-                            isActive={offset === 0 && !isSwiping}
+                            isActive={isOriginalLabelEligible}
                           />
                         ) : (
                           <Image
