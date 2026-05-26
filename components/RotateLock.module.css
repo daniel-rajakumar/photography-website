@@ -1,0 +1,52 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--color-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.phoneIcon {
+  width: 64px;
+  height: 64px;
+  color: var(--color-gold);
+  animation: rotateHint 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.phoneIcon svg {
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes rotateHint {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  30% {
+    transform: rotate(-90deg);
+  }
+  70% {
+    transform: rotate(-90deg);
+  }
+}
+
+.message {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  max-width: 22ch;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
