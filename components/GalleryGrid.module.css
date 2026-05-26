@@ -538,19 +538,36 @@
 }
 
 @media (orientation: landscape) and (max-height: 520px) {
+  :global(html) {
+    scroll-snap-type: y mandatory;
+    scroll-padding-top: 0;
+  }
+
   .grid {
-    gap: 3rem;
-    padding-top: 2rem;
-    padding-bottom: 4rem;
+    gap: 0;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .card {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
   }
 
   .phoneContainer.landscape {
-    max-width: min(760px, calc(100vw - 5rem), calc((100vh - 7rem) * 1.92));
+    max-width: min(860px, calc(100vw - 3rem), calc((100vh - 4rem) * 1.92));
   }
 
   @supports (height: 100svh) {
+    .card {
+      min-height: 100svh;
+    }
+
     .phoneContainer.landscape {
-      max-width: min(760px, calc(100vw - 5rem), calc((100svh - 7rem) * 1.92));
+      max-width: min(860px, calc(100vw - 3rem), calc((100svh - 4rem) * 1.92));
     }
   }
 }
