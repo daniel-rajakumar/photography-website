@@ -25,7 +25,7 @@
 .instructionText {
   margin-inline: auto;
   margin-top: 1.5rem;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1.2rem;
   max-width: fit-content;
   text-align: center;
   font-size: 0.75rem;
@@ -35,10 +35,17 @@
   text-transform: uppercase;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 100px;
+  border-radius: 16px;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  white-space: pre-line;
+  line-height: 1.6;
+}
+
+.highlight {
+  color: var(--color-gold);
+  font-weight: 800;
 }
 
 /* ── Filter Bar ── */
