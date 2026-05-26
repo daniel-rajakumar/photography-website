@@ -2,10 +2,121 @@
   min-height: 100dvh;
 }
 
+/* ── Home Page ── */
+.homePage {
+  min-height: 100dvh;
+  background: var(--color-bg);
+}
+
+.homeHero {
+  position: relative;
+  min-height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: clamp(5rem, 12vh, 8rem) clamp(1.25rem, 7vw, 6rem);
+}
+
+.homeHeroImage {
+  object-fit: cover;
+  object-position: center;
+  transform: scale(1.02);
+}
+
+.homeHeroOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(90deg, rgba(8, 8, 8, 0.94) 0%, rgba(8, 8, 8, 0.74) 42%, rgba(8, 8, 8, 0.16) 100%),
+    linear-gradient(0deg, rgba(8, 8, 8, 0.62) 0%, rgba(8, 8, 8, 0.1) 42%, rgba(8, 8, 8, 0.28) 100%);
+}
+
+.homeHeroContent {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 620px);
+  animation: homeFadeUp 0.8s var(--transition-slow) both;
+}
+
+.homeEyebrow {
+  margin-bottom: 1rem;
+  max-width: none;
+  color: var(--color-gold);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.homeTitle {
+  margin-bottom: 1.15rem;
+  color: var(--color-text-primary);
+}
+
+.homeDescription {
+  max-width: 48ch;
+  margin-bottom: 2rem;
+  color: rgba(245, 240, 235, 0.82);
+}
+
+.homeCta {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 1.25rem;
+  color: #080808;
+  background: var(--color-text-primary);
+  border: 1px solid rgba(245, 240, 235, 0.24);
+  border-radius: 8px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition:
+    transform var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.homeCta:hover {
+  transform: translateY(-2px);
+  background: var(--color-gold-light);
+}
+
+@keyframes homeFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 700px) {
+  .homeHero {
+    align-items: flex-end;
+    min-height: 92dvh;
+    padding-block: 5rem 3rem;
+  }
+
+  .homeHeroOverlay {
+    background:
+      linear-gradient(0deg, rgba(8, 8, 8, 0.95) 0%, rgba(8, 8, 8, 0.7) 46%, rgba(8, 8, 8, 0.14) 100%),
+      linear-gradient(90deg, rgba(8, 8, 8, 0.58) 0%, rgba(8, 8, 8, 0.1) 100%);
+  }
+
+  .homeDescription {
+    margin-bottom: 1.5rem;
+  }
+}
+
 /* ── Page Header ── */
 .pageHeader {
-  padding-top: var(--spacing-2xl);
-  padding-bottom: var(--spacing-xl);
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
   text-align: center;
   background: radial-gradient(ellipse at 50% 0%, rgba(201, 169, 110, 0.06) 0%, transparent 70%);
   border-bottom: 1px solid var(--color-border);
@@ -24,7 +135,6 @@
 
 .instructionText {
   margin-inline: auto;
-  margin-top: 1.5rem;
   padding: 0.75rem 1.2rem;
   max-width: fit-content;
   text-align: center;

@@ -118,9 +118,13 @@ export default function BeforeAfterImage({
     }
   };
 
+  const shouldShowSliderHint = !isDragging && sliderPos > 95;
+
   const sliderLine = (
     <div
-      className={styles.sliderLine}
+      className={`${styles.sliderLine} ${
+        shouldShowSliderHint ? styles.sliderLineHint : ""
+      }`}
       style={{
         top: `max(${isLandscape ? 22 : 55}px, ${sliderPos}%)`,
         transition: isDragging ? "none" : "top 1s cubic-bezier(0.32, 0.72, 0, 1)",
@@ -158,7 +162,9 @@ export default function BeforeAfterImage({
       
       {/* Top layer: Edited */}
       <div 
-        className={styles.editedWrapper}
+        className={`${styles.editedWrapper} ${
+          shouldShowSliderHint ? styles.editedWrapperHint : ""
+        }`}
         style={{
           clipPath: `polygon(0 0, 100% 0, 100% ${sliderPos}%, 0 ${sliderPos}%)`,
           transition: isDragging ? "none" : "clip-path 1s cubic-bezier(0.32, 0.72, 0, 1)"
