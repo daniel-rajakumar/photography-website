@@ -458,7 +458,7 @@
 }
 
 /* Responsive adjustment for Landscape on mobile screen viewports */
-@media (max-width: 768px) {
+@media (max-width: 768px) and (orientation: portrait) {
   .card:has(.phoneContainer.landscape) {
     --landscape-phone-width: min(375px, calc(100vw - 2rem));
     width: 100%;
