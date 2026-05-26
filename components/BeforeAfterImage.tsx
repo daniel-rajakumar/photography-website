@@ -50,7 +50,11 @@ export default function BeforeAfterImage({
       // Bottom of phone is on the left, Top of phone is on the right
       // Dragging Right (positive deltaX) moves towards Top (0%)
       const deltaX = clientX - startX;
-      deltaPercent = -(deltaX / rect.width) * 100;
+      const deltaY = clientY - startY;
+      deltaPercent =
+        Math.abs(deltaY) > Math.abs(deltaX)
+          ? (deltaY / rect.height) * 100
+          : -(deltaX / rect.width) * 100;
     } else {
       // Portrait mode or Desktop Landscape (unrotated)
       const deltaY = clientY - startY;
@@ -62,6 +66,7 @@ export default function BeforeAfterImage({
   };
 
   const handlePointerDown = (e: React.PointerEvent) => {
+    e.preventDefault();
     setIsDragging(true);
     hasDraggedRef.current = false;
     if (clearDragTimeoutRef.current !== null) {
@@ -76,6 +81,7 @@ export default function BeforeAfterImage({
 
   const handlePointerMove = (e: React.PointerEvent) => {
     if (isDragging) {
+      e.preventDefault();
       if (Math.abs(e.clientY - startY) > 5 || Math.abs(e.clientX - startX) > 5) {
         hasDraggedRef.current = true;
       }
@@ -118,13 +124,9 @@ export default function BeforeAfterImage({
     }
   };
 
-  const shouldShowSliderHint = !isDragging && sliderPos > 95;
-
   const sliderLine = (
     <div
-      className={`${styles.sliderLine} ${
-        shouldShowSliderHint ? styles.sliderLineHint : ""
-      }`}
+      className={styles.sliderLine}
       style={{
         top: `max(${isLandscape ? 22 : 55}px, ${sliderPos}%)`,
         transition: isDragging ? "none" : "top 1s cubic-bezier(0.32, 0.72, 0, 1)",
@@ -162,9 +164,7 @@ export default function BeforeAfterImage({
       
       {/* Top layer: Edited */}
       <div 
-        className={`${styles.editedWrapper} ${
-          shouldShowSliderHint ? styles.editedWrapperHint : ""
-        }`}
+        className={styles.editedWrapper}
         style={{
           clipPath: `polygon(0 0, 100% 0, 100% ${sliderPos}%, 0 ${sliderPos}%)`,
           transition: isDragging ? "none" : "clip-path 1s cubic-bezier(0.32, 0.72, 0, 1)"

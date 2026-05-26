@@ -72,61 +72,6 @@
   pointer-events: auto;
 }
 
-.sliderLineHint {
-  animation: sliderLineBounceHint 30s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
-}
-
-.editedWrapperHint {
-  animation: editedWrapperBounceHint 30s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
-}
-
-@keyframes sliderLineBounceHint {
-  0%,
-  5%,
-  100% {
-    top: 100%;
-  }
-  1.1% {
-    top: 93%;
-  }
-  2.1% {
-    top: 100%;
-  }
-  3.2% {
-    top: 96%;
-  }
-  4.1% {
-    top: 100%;
-  }
-}
-
-@keyframes editedWrapperBounceHint {
-  0%,
-  5%,
-  100% {
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-  }
-  1.1% {
-    clip-path: polygon(0 0, 100% 0, 100% 93%, 0 93%);
-  }
-  2.1% {
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-  }
-  3.2% {
-    clip-path: polygon(0 0, 100% 0, 100% 96%, 0 96%);
-  }
-  4.1% {
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .sliderLineHint,
-  .editedWrapperHint {
-    animation: none;
-  }
-}
-
 /* Invisible expanded hit area for easy grabbing on mobile */
 .sliderHandle::after {
   content: '';
