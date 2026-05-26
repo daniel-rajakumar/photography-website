@@ -67,6 +67,7 @@ export default function BeforeAfterImage({
 
   const handlePointerDown = (e: React.PointerEvent) => {
     e.preventDefault();
+    e.stopPropagation(); // prevent horizontal scroll carousel stealing the gesture
     setIsDragging(true);
     hasDraggedRef.current = false;
     if (clearDragTimeoutRef.current !== null) {
