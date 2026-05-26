@@ -11,6 +11,7 @@ interface Props {
   isInfoOpen?: boolean;
   isLandscape?: boolean;
   eager?: boolean;
+  isActive?: boolean;
 }
 
 export default function BeforeAfterImage({
@@ -20,6 +21,7 @@ export default function BeforeAfterImage({
   isInfoOpen = false,
   isLandscape = false,
   eager = false,
+  isActive = true,
 }: Props) {
   const [sliderPos, setSliderPos] = useState<number>(100);
   const [isDragging, setIsDragging] = useState(false);
@@ -161,7 +163,9 @@ export default function BeforeAfterImage({
         loading={eager ? "eager" : "lazy"}
         fetchPriority={eager ? "high" : "auto"}
       />
-      <div className={styles.uneditedLabel}>ORIGINAL</div>
+      {isActive && sliderPos < 95 && (
+        <div className={styles.uneditedLabel}>ORIGINAL</div>
+      )}
       
       {/* Top layer: Edited */}
       <div 
