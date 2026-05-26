@@ -1,6 +1,8 @@
 [
   {
-    "filename": "003 - 2026-04-19 - Hack Princeton S26.jpg",
+    "filename": "003 - 2026-04-19 - Hack Princeton S26",
+    "imagePath": "/photos/003 - 2026-04-19 - Hack Princeton S26/edited.jpg",
+    "originalPath": "/photos/003 - 2026-04-19 - Hack Princeton S26/raw.jpg",
     "title": "Hack Princeton S26",
     "category": "landscape",
     "date": "2026-04-19T11:38:23.000Z",
@@ -10,10 +12,13 @@
     "featured": false,
     "order": 999,
     "uploadTime": "2026-05-25T22:43:46.934Z",
-    "uploadIndex": 3
+    "uploadIndex": 3,
+    "hasOriginal": true
   },
   {
-    "filename": "002 - 2026-04-19 - Hack Princeton S26.jpg",
+    "filename": "002 - 2026-04-19 - Hack Princeton S26",
+    "imagePath": "/photos/002 - 2026-04-19 - Hack Princeton S26/edited.jpg",
+    "originalPath": "/photos/002 - 2026-04-19 - Hack Princeton S26/raw.jpg",
     "title": "Hack Princeton S26",
     "category": "landscape",
     "date": "2026-04-19T10:43:34.000Z",
@@ -23,10 +28,13 @@
     "featured": false,
     "order": 999,
     "uploadTime": "2026-05-25T22:43:46.874Z",
-    "uploadIndex": 2
+    "uploadIndex": 2,
+    "hasOriginal": true
   },
   {
-    "filename": "001 - 2026-05-18 - InterVarsitys Basilia 2026.JPG",
+    "filename": "001 - 2026-05-18 - InterVarsitys Basilia 2026",
+    "imagePath": "/photos/001 - 2026-05-18 - InterVarsitys Basilia 2026/edited.jpg",
+    "originalPath": "/photos/001 - 2026-05-18 - InterVarsitys Basilia 2026/raw.jpg",
     "title": "InterVarsity's Basilia 2026",
     "category": "landscape",
     "date": "2026-05-18T10:18:52.000Z",
@@ -36,6 +44,7 @@
     "featured": false,
     "order": 999,
     "uploadTime": "2026-05-25T22:42:19.676Z",
-    "uploadIndex": 1
+    "uploadIndex": 1,
+    "hasOriginal": true
   }
 ]

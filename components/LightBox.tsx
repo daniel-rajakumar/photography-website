@@ -59,7 +59,7 @@ export default function LightBox({ photo, photos, onClose, onNavigate }: LightBo
   };
 
   const imageUrl = photo
-    ? `/photos/${photo.filename}`
+    ? photo.imagePath ?? `/photos/${photo.filename}`
     : null;
 
   return (

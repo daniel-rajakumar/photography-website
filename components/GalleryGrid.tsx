@@ -65,7 +65,7 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
     <>
       <div className={styles.grid} role="list" aria-label="Photo gallery">
         {photos.map((photo, index) => {
-          const imageUrl = `/photos/${photo.filename}`;
+          const imageUrl = photo.imagePath ?? `/photos/${photo.filename}`;
           const isHorizontal = photo.category === "landscape";
           const captureDate = formatCaptureDate(photo.date);
           const captureTime = formatCaptureTime(photo.date);
@@ -146,7 +146,7 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
                       {photo.hasOriginal ? (
                         <BeforeAfterImage 
                           editedSrc={imageUrl} 
-                          originalSrc={`/photos/originals/${photo.filename}`} 
+                          originalSrc={photo.originalPath ?? `/photos/originals/${photo.filename}`} 
                           alt={photo.alt} 
                           isInfoOpen={activePhotoInfoId === photo.filename}
                           isLandscape={isHorizontal}
