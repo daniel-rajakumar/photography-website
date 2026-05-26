@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
 import type { LocalPhoto } from "@/lib/photos";
 import BeforeAfterImage from "./BeforeAfterImage";
@@ -38,12 +38,48 @@ const VISIBLE_RANGE = 2; // how many cards to show on each side
 export default function SwipeGrid({ photos }: GalleryGridProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [closedPhotoInfoIds, setClosedPhotoInfoIds] = useState<Set<string>>(() => new Set());
+  const [isSwiping, setIsSwiping] = useState(false);
 
   // Drag state kept in a single ref to avoid stale closures
   const drag = useRef({ active: false, startX: 0, startY: 0, offset: 0, intent: null as "h" | "v" | null });
   const [dragOffset, setDragOffset] = useState(0); // only for re-render
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(390);
+  const clearSwipeTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (clearSwipeTimeoutRef.current !== null) {
+        window.clearTimeout(clearSwipeTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const updateContainerWidth = () => {
+      setContainerWidth(container.clientWidth || 390);
+    };
+
+    updateContainerWidth();
+    const observer = new ResizeObserver(updateContainerWidth);
+    observer.observe(container);
+
+    return () => observer.disconnect();
+  }, []);
+
+  const finishSwipeAfterTransition = useCallback(() => {
+    if (clearSwipeTimeoutRef.current !== null) {
+      window.clearTimeout(clearSwipeTimeoutRef.current);
+    }
+    clearSwipeTimeoutRef.current = window.setTimeout(() => {
+      setIsSwiping(false);
+      clearSwipeTimeoutRef.current = null;
+    }, 520);
+  }, []);
 
   const togglePhotoInfo = (filename: string) => {
     setClosedPhotoInfoIds((current) => {
@@ -54,12 +90,14 @@ export default function SwipeGrid({ photos }: GalleryGridProps) {
   };
 
   const goTo = useCallback((index: number) => {
+    setIsSwiping(true);
     setCurrentIndex(Math.max(0, Math.min(photos.length - 1, index)));
     drag.current.offset = 0;
     drag.current.active = false;
     drag.current.intent = null;
     setDragOffset(0);
-  }, [photos.length]);
+    finishSwipeAfterTransition();
+  }, [finishSwipeAfterTransition, photos.length]);
 
   // ── Pointer handlers ──────────────────────────────────────────────────────
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -81,17 +119,18 @@ export default function SwipeGrid({ photos }: GalleryGridProps) {
     }
     if (d.intent !== "h") return;
 
+    setIsSwiping(true);
     d.offset = dx;
     setDragOffset(dx);
   };
 
-  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+  const handlePointerUp = () => {
     const d = drag.current;
     if (!d.active) return;
 
     const wasDragging = d.intent === "h";
     const dx = d.offset;
-    const width = containerRef.current?.clientWidth ?? 400;
+    const width = containerWidth;
     const threshold = width * 0.15; // 15% of screen width
 
     if (wasDragging) {
@@ -105,18 +144,19 @@ export default function SwipeGrid({ photos }: GalleryGridProps) {
         drag.current.active = false;
         drag.current.intent = null;
         setDragOffset(0);
+        finishSwipeAfterTransition();
       }
     } else {
       drag.current.active = false;
       drag.current.intent = null;
+      setIsSwiping(false);
     }
   };
 
   // ── Card transform ────────────────────────────────────────────────────────
   const getCardStyle = (offset: number): React.CSSProperties => {
-    const width = containerRef.current?.clientWidth ?? 390;
     // Normalize drag offset to fraction of card width
-    const dragFraction = dragOffset / width;
+    const dragFraction = dragOffset / containerWidth;
 
     // Positive dragFraction = user dragging right = cards move right = effectiveOffset increases
     const effectiveOffset = offset + dragFraction;
@@ -211,6 +251,7 @@ export default function SwipeGrid({ photos }: GalleryGridProps) {
                             isInfoOpen={isInfoOpen}
                             isLandscape={isHorizontal}
                             eager={index === 0}
+                            isActive={offset === 0 && !isSwiping}
                           />
                         ) : (
                           <Image
