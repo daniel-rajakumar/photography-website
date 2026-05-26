@@ -20,20 +20,19 @@
   padding: 0.5rem 1.1rem;
   border-radius: 100px;
   font-size: 0.82rem;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: 0.04em;
-  color: var(--color-text-muted);
-  border: 1px solid var(--color-border);
-  background: transparent;
+  color: var(--color-text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
   transition: color var(--transition-fast), background var(--transition-fast),
     border-color var(--transition-fast), transform var(--transition-fast);
   white-space: nowrap;
 }
 
 .pill:hover:not(.pillActive) {
-  color: var(--color-text-secondary);
-  border-color: var(--color-border-strong);
-  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.1);
   transform: translateY(-1px);
 }
 
@@ -48,8 +47,8 @@
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   color: inherit;
-  opacity: 0.65;
-  background: rgba(255, 255, 255, 0.06);
+  opacity: 0.9;
+  background: rgba(255, 255, 255, 0.15);
   padding: 0.1rem 0.45rem;
   border-radius: 100px;
 }
