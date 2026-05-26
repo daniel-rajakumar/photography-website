@@ -13,11 +13,12 @@ interface Props {
 export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props) {
   const [sliderPos, setSliderPos] = useState<number>(100);
   const [isDragging, setIsDragging] = useState(false);
-  const [hasDragged, setHasDragged] = useState(false);
   const [startX, setStartX] = useState(0);
   const [startY, setStartY] = useState(0);
   const [startPos, setStartPos] = useState(100);
   const containerRef = useRef<HTMLDivElement>(null);
+  const hasDraggedRef = useRef(false);
+  const clearDragTimeoutRef = useRef<number | null>(null);
 
   const updatePos = (clientX: number, clientY: number) => {
     if (!containerRef.current) return;
@@ -45,7 +46,11 @@ export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props)
 
   const handlePointerDown = (e: React.PointerEvent) => {
     setIsDragging(true);
-    setHasDragged(false);
+    hasDraggedRef.current = false;
+    if (clearDragTimeoutRef.current !== null) {
+      window.clearTimeout(clearDragTimeoutRef.current);
+      clearDragTimeoutRef.current = null;
+    }
     setStartX(e.clientX);
     setStartY(e.clientY);
     setStartPos(sliderPos);
@@ -55,7 +60,7 @@ export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props)
   const handlePointerMove = (e: React.PointerEvent) => {
     if (isDragging) {
       if (Math.abs(e.clientY - startY) > 5 || Math.abs(e.clientX - startX) > 5) {
-        setHasDragged(true);
+        hasDraggedRef.current = true;
       }
       updatePos(e.clientX, e.clientY);
     }
@@ -64,6 +69,12 @@ export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props)
   const handlePointerUp = (e: React.PointerEvent) => {
     setIsDragging(false);
     e.currentTarget.releasePointerCapture(e.pointerId);
+    if (hasDraggedRef.current) {
+      clearDragTimeoutRef.current = window.setTimeout(() => {
+        hasDraggedRef.current = false;
+        clearDragTimeoutRef.current = null;
+      }, 250);
+    }
     
     if (sliderPos < 50) {
       setSliderPos(0);
@@ -73,9 +84,10 @@ export default function BeforeAfterImage({ editedSrc, originalSrc, alt }: Props)
   };
 
   const handleClick = (e: React.MouseEvent) => {
-    if (hasDragged) {
+    if (hasDraggedRef.current) {
       e.stopPropagation();
       e.preventDefault();
+      hasDraggedRef.current = false;
     }
   };
 
