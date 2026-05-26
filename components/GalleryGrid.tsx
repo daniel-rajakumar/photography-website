@@ -175,7 +175,7 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
                                 <>{photo.location.toUpperCase()}</>
                               ) : "UNKNOWN LOCATION"}
                             </p>
-                            <p className={styles.infoDevice}>SHOT ON {photo.phone.toUpperCase()}</p>
+                            <p className={styles.infoDevice}>{photo.phone.toUpperCase()}</p>
                           </div>
                         </div>
                       </div>
