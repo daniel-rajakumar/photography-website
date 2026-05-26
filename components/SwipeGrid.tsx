@@ -38,12 +38,11 @@ const VISIBLE_RANGE = 2; // how many cards to show on each side
 export default function SwipeGrid({ photos }: GalleryGridProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [closedPhotoInfoIds, setClosedPhotoInfoIds] = useState<Set<string>>(() => new Set());
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState(0);
 
-  const pointerStartX = useRef(0);
-  const pointerStartY = useRef(0);
-  const isDragIntent = useRef<"horizontal" | "vertical" | null>(null);
+  // Drag state kept in a single ref to avoid stale closures
+  const drag = useRef({ active: false, startX: 0, startY: 0, offset: 0, intent: null as "h" | "v" | null });
+  const [dragOffset, setDragOffset] = useState(0); // only for re-render
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   const togglePhotoInfo = (filename: string) => {
@@ -56,79 +55,90 @@ export default function SwipeGrid({ photos }: GalleryGridProps) {
 
   const goTo = useCallback((index: number) => {
     setCurrentIndex(Math.max(0, Math.min(photos.length - 1, index)));
+    drag.current.offset = 0;
+    drag.current.active = false;
+    drag.current.intent = null;
     setDragOffset(0);
-    setIsDragging(false);
-    isDragIntent.current = null;
   }, [photos.length]);
 
-  // ── Pointer / touch handlers ──────────────────────────────────────────────
+  // ── Pointer handlers ──────────────────────────────────────────────────────
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    // Only respond to touch / stylus, or primary mouse button
     if (e.pointerType === "mouse" && e.button !== 0) return;
-    pointerStartX.current = e.clientX;
-    pointerStartY.current = e.clientY;
-    isDragIntent.current = null;
+    drag.current = { active: true, startX: e.clientX, startY: e.clientY, offset: 0, intent: null };
     containerRef.current?.setPointerCapture(e.pointerId);
   };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    const dx = e.clientX - pointerStartX.current;
-    const dy = e.clientY - pointerStartY.current;
+    const d = drag.current;
+    if (!d.active) return;
 
-    // Determine intent on first significant move
-    if (isDragIntent.current === null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
-      isDragIntent.current = Math.abs(dx) > Math.abs(dy) ? "horizontal" : "vertical";
+    const dx = e.clientX - d.startX;
+    const dy = e.clientY - d.startY;
+
+    // Determine intent once
+    if (d.intent === null && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) {
+      d.intent = Math.abs(dx) >= Math.abs(dy) ? "h" : "v";
     }
+    if (d.intent !== "h") return;
 
-    if (isDragIntent.current !== "horizontal") return;
-    setIsDragging(true);
+    d.offset = dx;
     setDragOffset(dx);
   };
 
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (isDragIntent.current !== "horizontal") {
-      setIsDragging(false);
-      setDragOffset(0);
-      isDragIntent.current = null;
-      return;
-    }
-    const dx = e.clientX - pointerStartX.current;
-    const threshold = (containerRef.current?.clientWidth ?? 300) * 0.2;
-    if (dx < -threshold && currentIndex < photos.length - 1) {
-      goTo(currentIndex + 1);
-    } else if (dx > threshold && currentIndex > 0) {
-      goTo(currentIndex - 1);
+    const d = drag.current;
+    if (!d.active) return;
+
+    const wasDragging = d.intent === "h";
+    const dx = d.offset;
+    const width = containerRef.current?.clientWidth ?? 400;
+    const threshold = width * 0.15; // 15% of screen width
+
+    if (wasDragging) {
+      if (dx < -threshold && currentIndex < photos.length - 1) {
+        goTo(currentIndex + 1);
+      } else if (dx > threshold && currentIndex > 0) {
+        goTo(currentIndex - 1);
+      } else {
+        // snap back in place
+        drag.current.offset = 0;
+        drag.current.active = false;
+        drag.current.intent = null;
+        setDragOffset(0);
+      }
     } else {
-      setDragOffset(0);
-      setIsDragging(false);
-      isDragIntent.current = null;
+      drag.current.active = false;
+      drag.current.intent = null;
     }
   };
 
-  // ── Card transform helper ─────────────────────────────────────────────────
+  // ── Card transform ────────────────────────────────────────────────────────
   const getCardStyle = (offset: number): React.CSSProperties => {
-    // offset = card index - currentIndex
-    const absOffset = Math.abs(offset);
+    const width = containerRef.current?.clientWidth ?? 390;
+    // Normalize drag offset to fraction of card width
+    const dragFraction = dragOffset / width;
 
-    // Live drag influence
-    const dragInfluence = isDragging ? dragOffset / (containerRef.current?.clientWidth ?? 400) : 0;
-    const effectiveOffset = offset - dragInfluence;
-    const absEffective = Math.abs(effectiveOffset);
+    // Positive dragFraction = user dragging right = cards move right = effectiveOffset increases
+    const effectiveOffset = offset + dragFraction;
+    const absEff = Math.abs(effectiveOffset);
 
-    const translateX = effectiveOffset * 70; // % of card width
-    const rotateY = -effectiveOffset * 28;   // degrees
-    const scale = Math.max(0.72, 1 - absEffective * 0.12);
-    const translateZ = -absEffective * 80;   // px depth
-    const opacity = absOffset > VISIBLE_RANGE ? 0 : Math.max(0.2, 1 - absEffective * 0.4);
-    const zIndex = 100 - absOffset;
+    const translateX    = effectiveOffset * 78;           // % of card width
+    const rotateY       = -effectiveOffset * 25;          // deg
+    const scale         = Math.max(0.72, 1 - absEff * 0.11);
+    const translateZ    = Math.min(0, -absEff * 60);      // px depth
+    const opacity       = Math.max(0, 1 - absEff * 0.45);
+    const zIndex        = Math.round(100 - Math.abs(offset) * 10);
+    const isSettled     = dragOffset === 0;
 
     return {
       position: "absolute",
       transform: `translateX(${translateX}%) rotateY(${rotateY}deg) scale(${scale}) translateZ(${translateZ}px)`,
       opacity,
       zIndex,
-      transition: isDragging ? "none" : "transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.55s ease",
-      pointerEvents: absOffset > VISIBLE_RANGE ? "none" : "auto",
+      transition: isSettled
+        ? "transform 0.48s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.48s ease"
+        : "none",
+      pointerEvents: Math.abs(offset) > VISIBLE_RANGE ? "none" : "auto",
       willChange: "transform, opacity",
     };
   };
@@ -167,7 +177,7 @@ export default function SwipeGrid({ photos }: GalleryGridProps) {
                   <div className={styles.phoneBezel}>
                     <button
                       className={`${styles.phoneScreen} ${isInfoOpen ? styles.showInfo : ""}`}
-                      onClick={() => { if (!isDragging) togglePhotoInfo(photo.filename); }}
+                      onClick={() => { if (!drag.current.active) togglePhotoInfo(photo.filename); }}
                       aria-label={`Toggle info for photo: ${photo.title}`}
                       id={`gallery-photo-${photo.filename}`}
                       data-phone-screen
