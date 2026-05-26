@@ -24,14 +24,21 @@
 
 .instructionText {
   margin-inline: auto;
-  margin-top: 1rem;
-  max-width: 55ch;
+  margin-top: 1.5rem;
+  padding: 0.5rem 1rem;
+  max-width: fit-content;
   text-align: center;
-  font-size: 0.85rem;
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--color-text-primary);
   text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 100px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* ── Filter Bar ── */
