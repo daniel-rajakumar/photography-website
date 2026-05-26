@@ -22,6 +22,18 @@
   text-align: center;
 }
 
+.instructionText {
+  margin-inline: auto;
+  margin-top: 1rem;
+  max-width: 55ch;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
 /* ── Filter Bar ── */
 .filterBar {
   display: flex;

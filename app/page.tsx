@@ -12,7 +12,8 @@ export default async function GalleryPage() {
   const contentPath = path.join(process.cwd(), "data", "content.json");
   let content = {
     galleryTitle: "The Gallery",
-    galleryDescription: "A complete collection spanning landscapes, portraits, street scenes, abstract macro work, and architectural studies."
+    galleryDescription: "A complete collection spanning landscapes, portraits, street scenes, abstract macro work, and architectural studies.",
+    instructionText: "Drag the white line to see unedited photo"
   };
   
   if (fs.existsSync(contentPath)) {
