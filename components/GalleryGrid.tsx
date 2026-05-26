@@ -59,7 +59,21 @@ function formatCaptureTime(value?: string) {
 }
 
 export default function GalleryGrid({ photos }: GalleryGridProps) {
-  const [activePhotoInfoId, setActivePhotoInfoId] = useState<string | null>(null);
+  const [closedPhotoInfoIds, setClosedPhotoInfoIds] = useState<Set<string>>(
+    () => new Set()
+  );
+
+  const togglePhotoInfo = (filename: string) => {
+    setClosedPhotoInfoIds((current) => {
+      const next = new Set(current);
+      if (next.has(filename)) {
+        next.delete(filename);
+      } else {
+        next.add(filename);
+      }
+      return next;
+    });
+  };
 
   return (
     <>
@@ -69,6 +83,7 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
           const isHorizontal = photo.category === "landscape";
           const captureDate = formatCaptureDate(photo.date);
           const captureTime = formatCaptureTime(photo.date);
+          const isInfoOpen = !closedPhotoInfoIds.has(photo.filename);
 
           return (
             <article
@@ -89,8 +104,8 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
                 <div className={styles.phoneBezel}>
                   {/* Screen Content */}
                   <button
-                    className={`${styles.phoneScreen} ${activePhotoInfoId === photo.filename ? styles.showInfo : ""}`}
-                    onClick={() => setActivePhotoInfoId(activePhotoInfoId === photo.filename ? null : photo.filename)}
+                    className={`${styles.phoneScreen} ${isInfoOpen ? styles.showInfo : ""}`}
+                    onClick={() => togglePhotoInfo(photo.filename)}
                     aria-label={`Toggle info for photo: ${photo.title}`}
                     id={`gallery-photo-${photo.filename}`}
                     data-phone-screen
@@ -127,7 +142,7 @@ export default function GalleryGrid({ photos }: GalleryGridProps) {
                           editedSrc={imageUrl} 
                           originalSrc={photo.originalPath ?? `/photos/originals/${photo.filename}`} 
                           alt={photo.alt} 
-                          isInfoOpen={activePhotoInfoId === photo.filename}
+                          isInfoOpen={isInfoOpen}
                           isLandscape={isHorizontal}
                           eager={index === 0}
                         />
