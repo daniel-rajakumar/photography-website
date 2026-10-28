@@ -1,10 +1,16 @@
 import { getLocalPhotos } from "@/lib/photos";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import AdminDashboard from "./AdminDashboard";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
+  // The admin page edits files on disk, so it only exists under `npm run dev`.
+  if (process.env.NODE_ENV === "production") {
+    notFound();
+  }
+
   const photos = await getLocalPhotos();
 
   return (

@@ -32,6 +32,10 @@ const VALID_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".avif"];
 const EDITED_FILE_BASENAME = "edited";
 const RAW_FILE_BASENAME = "raw";
 
+// Editing renames files and rewrites photo metadata, so it only runs under
+// `npm run dev` on my own machine, never on the deployed site.
+const EDITING_ENABLED = process.env.NODE_ENV !== "production";
+
 function sanitizeFilename(name: string): string {
   return name.replace(/[^a-zA-Z0-9 -]/g, "").replace(/\s+/g, " ").trim();
 }
@@ -291,6 +295,10 @@ export async function getLocalPhotos(): Promise<LocalPhoto[]> {
 }
 
 export async function savePhotoMetadata(updatedPhotos: LocalPhoto[]): Promise<LocalPhoto[]> {
+  if (!EDITING_ENABLED) {
+    throw new Error("Photo editing only works when running the site locally with npm run dev.");
+  }
+
   try {
     // Read previous data to detect changes
     let oldPhotos: LocalPhoto[] = [];
